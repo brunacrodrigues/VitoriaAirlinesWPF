@@ -8,7 +8,7 @@
         Title="MainWindow" Height="650" Width="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="None"
         Background="Transparent" AllowsTransparency="True"
-        ResizeMode="NoResize" FontFamily="Poppins">
+        ResizeMode="NoResize">
 
     <Border Background="White" CornerRadius="8">
         <Grid>
@@ -17,19 +17,231 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0"
-                    Background="#530411" CornerRadius="8 0 0 8">
-                <Grid x:Name="GridNav" Width="100">
+            <!-- Side Bar -->
+            <Border Grid.Column="0" Background="#FF530411" CornerRadius="8 0 0 8">
+                <Grid x:Name="GridNav" Width="200">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="60"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+
+                    <!-- Logo -->
+                    <Grid Grid.Row="0">
+                        <Border Margin="14 0 0 0" Width="150" Height="48" HorizontalAlignment="Left">
+                            <Border.Background>
+                                <ImageBrush ImageSource="/Resources/Icons/logo.png" Stretch="Uniform"/>
+                            </Border.Background>
+                        </Border>
+                    </Grid>
+
+                    <!-- Buttons -->
+                    <StackPanel Grid.Row="1" Margin="10,40,10,20" VerticalAlignment="Top" >
+
+                        <!-- Search Flights -->
+                        <Button x:Name="btnSearch" Height="50" Background="{x:Null}" Click="btnSearch_Click" Margin="0 0 0 10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="2" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Resources/Icons/search.png" Width="30" Height="30" Margin="0,0,10,0"/>
+                                            <TextBlock Text="Search Flights" VerticalAlignment="Center" Foreground="#FFF8DC" FontSize="12" FontFamily="{StaticResource OutfitBold}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#FFF8DC"/>
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF530411"/>
+                                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                            <Setter TargetName="border" Property="CornerRadius" Value="8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Manage Flights -->
+                        <Button x:Name="btnFlights" Height="50" Background="{x:Null}" Click="btnFlights_Click" Margin="0 0 0 10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="2" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Resources/Icons/flights.png" Width="30" Height="30" Margin="0,0,10,0"/>
+                                            <TextBlock Text="Manage Flights" VerticalAlignment="Center" Foreground="#FFF8DC" FontSize="12" FontFamily="{StaticResource OutfitBold}" />
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#FFF8DC"/>
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF530411"/>
+                                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                            <Setter TargetName="border" Property="CornerRadius" Value="8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Manage Airplanes -->
+                        <Button x:Name="btnAirplanes" Height="50" Background="{x:Null}" Click="btnAirplanes_Click" Margin="0 0 0 10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="2" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Resources/Icons/airplane.png" Width="25" Height="25" Margin="0,0,10,0"/>
+                                            <TextBlock Text="Manage Airplanes" VerticalAlignment="Center" Foreground="#FFF8DC" FontSize="12" FontFamily="{StaticResource OutfitBold}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#FFF8DC"/>
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF530411"/>
+                                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                            <Setter TargetName="border" Property="CornerRadius" Value="8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Manage Airports -->
+                        <Button x:Name="btnAirports" Height="50" Background="{x:Null}" Click="btnAirports_Click" Margin="0 0 0 10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="2" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Resources/Icons/location.png" Width="28" Height="28" Margin="0,0,10,0"/>
+                                            <TextBlock Text="Manage Airports" VerticalAlignment="Center" Foreground="#FFF8DC" FontSize="12" FontFamily="{StaticResource OutfitBold}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#FFF8DC"/>
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF530411"/>
+                                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                            <Setter TargetName="border" Property="CornerRadius" Value="8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Sell Tickets -->
+                        <Button x:Name="btnTickets" Height="50" Background="{x:Null}" Click="btnTickets_Click" Margin="0 0 0 10">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="2" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Resources/Icons/tickets.png" Width="30" Height="30" Margin="0,0,10,0"/>
+                                            <TextBlock Text="Sell Tickets" VerticalAlignment="Center" Foreground="#FFF8DC" FontSize="12" FontFamily="{StaticResource OutfitBold}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#FFF8DC"/>
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF530411"/>
+                                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                            <Setter TargetName="border" Property="CornerRadius" Value="8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Manage Passengers -->
+                        <Button x:Name="btnPassengers" Height="50" Background="{x:Null}" Click="btnPassengers_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="White" BorderThickness="2" CornerRadius="8">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Image Source="/Resources/Icons/passenger.png" Width="30" Height="30" Margin="0,0,10,0"/>
+                                            <TextBlock Text="Manage Passengers" VerticalAlignment="Center" Foreground="#FFF8DC" FontSize="12" FontFamily="{StaticResource OutfitBold}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#FFF8DC"/>
+                                            <Setter TargetName="border" Property="BorderBrush" Value="#FF530411"/>
+                                            <Setter TargetName="border" Property="BorderThickness" Value="2"/>
+                                            <Setter TargetName="border" Property="CornerRadius" Value="8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                    </StackPanel>
                 </Grid>
             </Border>
-            
-            
+
+            <!-- Content -->
+            <Grid Grid.Column="1" Background="LightYellow">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Button Close | Restore | Minimize -->
+                <StackPanel Grid.Row="0" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Top" 
+                            Margin="0,5,10,0" 
+                            Height="30" 
+                            Orientation="Horizontal"
+                            FlowDirection="RightToLeft"
+                            Grid.RowSpan="2">
+                    <!-- Close Button -->
+                    <Button x:Name="btnClose"
+                            Width="25"
+                            Height="25"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            Margin="4,0"
+                            Click="btnClose_Click"
+                            Tag="IsCloseButton">    
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="0"
+                                        CornerRadius="5">
+                                    <Image Source="/Resources/Icons/close.png" Width="15" Height="15" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="Red"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Restore Button -->
+                    <Button x:Name="btnRestore" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Click="btnRestore_Click">
+                        <Button.Content>
+                            <Image x:Name="btnIcon" Source="/Resources/Icons/restore.png" Width="15" Height="15"/>
+                        </Button.Content>
+                    </Button>
+
+                    <!-- Minimize Button -->
+                    <Button x:Name="btnMinimize" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Click="btnMinimize_Click">
+                        <Button.Content>
+                            <Image Source="/Resources/Icons/minimize.png" Width="15" Height="15"/>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+
+                <Frame Grid.Row="1"
+                       Name ="frameContainer"
+                       Margin="20"
+                       Background="white">   
+                    
+                </Frame>             
+
+
+            </Grid>
+
         </Grid>
-        
-        
     </Border>
 </Window>

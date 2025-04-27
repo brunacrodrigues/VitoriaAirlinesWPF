@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VitoriaAirlinesWPF.Pages;
 
 namespace VitoriaAirlinesWPF
 {
@@ -19,6 +20,62 @@ namespace VitoriaAirlinesWPF
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnFlights_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnAirplanes_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnAirports_Click(object sender, RoutedEventArgs e)
+        {
+            frameContainer.Navigate(new Airports());
+        }
+
+        private void btnTickets_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnPassengers_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void btnRestore_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowState = WindowState.Normal;
+                
+                btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore.png", UriKind.Relative));
+            }
+            else
+            {
+                WindowState = WindowState.Maximized;
+
+                btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore2.png", UriKind.Relative));
+            }
+        }
+
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
         }
     }
 }
