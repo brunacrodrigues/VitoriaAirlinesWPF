@@ -65,7 +65,7 @@ namespace VitoriaAirlinesWPF.Windows
                 if (response.IsSuccess)
                 {
                     MessageBox.Show("Airport added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await _airportsPage.InitPage();
+                    await _airportsPage.LoadAirports();
                     this.Close();
                 }
                 else

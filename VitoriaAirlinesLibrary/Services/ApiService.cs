@@ -51,7 +51,6 @@ namespace VitoriaAirlinesLibrary.Services
             }
         }
 
-
         public async Task<Response> PostAsync<T>(string controller, T data)
         {
             try
@@ -83,7 +82,6 @@ namespace VitoriaAirlinesLibrary.Services
             }
         }
 
-        // Método PUT genérico
         public async Task<Response> PutAsync<T>(string controller, T data)
         {
             try
@@ -115,7 +113,6 @@ namespace VitoriaAirlinesLibrary.Services
             }
         }
 
-        // Método DELETE genérico
         public async Task<Response> DeleteAsync(string controller)
         {
             try

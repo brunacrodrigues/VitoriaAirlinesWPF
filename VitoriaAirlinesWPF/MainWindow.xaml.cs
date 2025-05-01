@@ -49,7 +49,7 @@ namespace VitoriaAirlinesWPF
 
         private void btnPassengers_Click(object sender, RoutedEventArgs e)
         {
-
+            frameContainer.Navigate(new ClientsPage());
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)

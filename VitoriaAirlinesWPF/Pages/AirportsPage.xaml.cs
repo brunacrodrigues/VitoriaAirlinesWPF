@@ -12,7 +12,6 @@ namespace VitoriaAirlinesWPF.Pages
     /// </summary>
     public partial class AirportsPage : Page
     {
-        List<Airport> Airports = new List<Airport>();
         AirportService _airportService;
         public AirportsPage()
         {
@@ -36,7 +35,7 @@ namespace VitoriaAirlinesWPF.Pages
 
             if (airportExists == null)
             {
-                MessageBox.Show("The airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("The selected airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -53,7 +52,7 @@ namespace VitoriaAirlinesWPF.Pages
             if (response.IsSuccess)
             {
                 MessageBox.Show("Airport deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await InitPage();
+                await LoadAirports();
             }
             else
             {
@@ -71,14 +70,16 @@ namespace VitoriaAirlinesWPF.Pages
         }
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await InitPage();
+            await LoadAirports();
         }
 
         #endregion
 
         #region Methods
-        public async Task InitPage()
+        public async Task LoadAirports()
         {
+            List<Airport> Airports = new List<Airport>();
+
             var response = await _airportService.GetAllAsync();
 
             if (response.IsSuccess)
