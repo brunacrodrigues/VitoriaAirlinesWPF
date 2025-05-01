@@ -90,7 +90,7 @@
                             <TextBlock Text="IATA" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center"/>
                         </Border>
                         <Border Background="White" CornerRadius="5" BorderBrush="#FF530411" BorderThickness="2" Margin="20,0" Width="150" Height="30">
-                            <TextBox Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
+                            <TextBox x:Name="txtIATA" FontFamily="{StaticResource OutfitRegular}" FontSize="13" Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
 
@@ -99,7 +99,7 @@
                             <TextBlock Text="Name" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center"/>
                         </Border>
                         <Border Background="White" CornerRadius="5" BorderBrush="#FF530411" BorderThickness="2" Margin="20,0" Width="400" Height="30">
-                            <TextBox Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
+                            <TextBox x:Name="txtName" FontFamily="{StaticResource OutfitRegular}" FontSize="13" Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
 
@@ -108,7 +108,7 @@
                             <TextBlock Text="City" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center"/>
                         </Border>
                         <Border Background="White" CornerRadius="5" BorderBrush="#FF530411" BorderThickness="2" Margin="20,0" Width="250" Height="30">
-                            <TextBox Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
+                            <TextBox x:Name="txtCity" FontFamily="{StaticResource OutfitRegular}" FontSize="13" Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
 
@@ -117,13 +117,14 @@
                             <TextBlock Text="Country" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center"/>
                         </Border>
                         <Border Background="White" CornerRadius="5" BorderBrush="#FF530411" BorderThickness="2" Margin="20,0" Width="250" Height="30">
-                            <TextBox Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
+                            <TextBox x:Name="txtCountry" FontFamily="{StaticResource OutfitRegular}" FontSize="13" Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center"/>
                         </Border>
                     </StackPanel>
 
-                    <Button Content="Add Airport"
+                    <Button x:Name="btnAddAirport" Content="Add Airport"
                             Style="{StaticResource RoundedButton}"
-                            Margin="0,15,0,0" Width="580"/>
+                            Margin="0,15,0,0" Width="580"
+                            Click="btnAddAirport_Click"/>
                 </StackPanel>
             </Border>
         </Grid>
