@@ -29,36 +29,14 @@ namespace VitoriaAirlinesWPF.Pages
 
         private async void btnDeleteAirport_Click(object sender, RoutedEventArgs e)
         {
-            var selectedAirport = airportsDataGrid.SelectedItem as Airport;
+            var selectedAirport = airportsDataGrid.SelectedItem as Airport;			
 
-            var airportExists = await _airportService.GetByIdAsync(selectedAirport.Id);
+			if (!ConfirmDeletion(selectedAirport.Name))
+				return;
 
-            if (airportExists == null)
-            {
-                MessageBox.Show("The selected airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!await AirportExistsAsync(selectedAirport.Id))
                 return;
-            }
-
-            var confirmResult = MessageBox.Show($"Are you sure you want to delete the airport '{selectedAirport.Name}'?",
-                                                "Confirm Delete",
-                                                MessageBoxButton.YesNo,
-                                                MessageBoxImage.Question);
-
-            if (confirmResult != MessageBoxResult.Yes)
-                return;
-
-            var response = await _airportService.DeleteAsync(selectedAirport.Id);
-
-            if (response.IsSuccess)
-            {
-                MessageBox.Show("Airport deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await LoadAirports();
-            }
-            else
-            {
-                MessageBox.Show($"Error deleting airport: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+		}
 
         private void btnEditAirport_Click(object sender, RoutedEventArgs e)
         {
@@ -90,7 +68,45 @@ namespace VitoriaAirlinesWPF.Pages
             }
         }
 
-        #endregion
+		private async Task<bool> AirportExistsAsync(int airportId)
+		{
+			var clientExists = await _airportService.ExistsAsync(airportId);
 
-    }
+			if (!clientExists)
+			{
+				MessageBox.Show("The selected airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool ConfirmDeletion(string airportName)
+		{
+			var confirmResult = MessageBox.Show($"Are you sure you want to delete the airport '{airportName}'?",
+												"Confirm Delete",
+												MessageBoxButton.YesNo,
+												MessageBoxImage.Question);
+
+			return confirmResult == MessageBoxResult.Yes;
+		}
+
+		private async Task DeleteAirportAsync(int airportId)
+		{
+			var response = await _airportService.DeleteAsync(airportId);
+
+			if (response.IsSuccess)
+			{
+				MessageBox.Show("Airport deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+				await LoadAirports();
+			}
+			else
+			{
+				MessageBox.Show($"Error deleting airport: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+		#endregion
+
+	}
 }

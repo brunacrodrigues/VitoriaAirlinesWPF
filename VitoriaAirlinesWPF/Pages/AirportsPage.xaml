@@ -79,7 +79,7 @@
                                         Binding="{Binding IATA}"/>
 
                     <!-- Name Column -->
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" MinWidth="150">
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" MinWidth="150" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="Wrap"/>

@@ -1,28 +1,117 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using VitoriaAirlinesLibrary.Models;
+using VitoriaAirlinesLibrary.Services;
+using VitoriaAirlinesWPF.Windows;
 
 namespace VitoriaAirlinesWPF.Pages
 {
     /// <summary>
     /// Interaction logic for Airplanes.xaml
     /// </summary>
-    public partial class Airplanes : Page
+    public partial class AirplanesPage : Page
     {
-        public Airplanes()
+        AirplaneService _airplaneService;
+
+        public AirplanesPage()
         {
             InitializeComponent();
+            _airplaneService = new AirplaneService();
+			Loaded += Page_Loaded;
+		}
+
+        private async void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            await LoadAirplanes();
         }
-    }
+
+        private void btnAddModel_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var addAirplaneWindow = new AddAirplaneWindow(this);
+            addAirplaneWindow.ShowDialog();
+        }
+
+        private async void btnDeleteModel_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+			var selectedAirplaneModel = airplanesDataGrid.SelectedItem as Airplane;
+
+            if (!ConfirmDeletion(selectedAirplaneModel.Model))
+            {
+                return;
+            }
+
+            if (!await AirplaneExistsAsync(selectedAirplaneModel.Id))
+            {
+                await LoadAirplanes();
+                return; 
+            }
+
+            await DeleteAirplaneAsync(selectedAirplaneModel.Id);
+
+
+        }
+
+
+        private void btnEditModel_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var selectedAirplaneModel = airplanesDataGrid.SelectedItem as Airplane;
+            EditAirplaneWindow airplaneWindow = new EditAirplaneWindow(this, selectedAirplaneModel);
+            airplaneWindow.ShowDialog();
+
+		}
+
+
+        public async Task LoadAirplanes()
+        {
+            List<Airplane> Airplanes = new List<Airplane>();
+
+            var response = await _airplaneService.GetAllAsync();
+
+            if (response.IsSuccess)
+            {
+                Airplanes = response.Result as List<Airplane>;
+                airplanesDataGrid.ItemsSource = null;
+                airplanesDataGrid.ItemsSource = Airplanes;
+            }
+        }
+
+		private async Task<bool> AirplaneExistsAsync(int airplaneId)
+		{
+			var airplaneExists = await _airplaneService.ExistsAsync(airplaneId);
+
+			if (!airplaneExists)
+			{
+				MessageBox.Show("The selected airplane model no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool ConfirmDeletion(string airplaneModel)
+		{
+			var confirmResult = MessageBox.Show($"Are you sure you want to delete the model '{airplaneModel}'?",
+												"Confirm Delete",
+												MessageBoxButton.YesNo,
+												MessageBoxImage.Question);
+
+			return confirmResult == MessageBoxResult.Yes;
+		}
+
+		private async Task DeleteAirplaneAsync(int airplaneId)
+		{
+			var response = await _airplaneService.DeleteAsync(airplaneId);
+
+			if (response.IsSuccess)
+			{
+				MessageBox.Show("Model deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+				await LoadAirplanes();
+			}
+			else
+			{
+				MessageBox.Show($"Error deleting airplane model: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using Syncfusion.Licensing;
+using System.Configuration;
 using System.Data;
 using System.Windows;
 
@@ -9,6 +10,11 @@ namespace VitoriaAirlinesWPF
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            SyncfusionLicenseProvider.RegisterLicense("Mzg0Njg3N0AzMjM5MmUzMDJlMzAzYjMyMzkzYkczOUpmTVhsUCtCamJrSEs0dTE5VXlsenptWEFuM0VMQUdMbDA0a213TU09");
+        }
+
     }
 
 }

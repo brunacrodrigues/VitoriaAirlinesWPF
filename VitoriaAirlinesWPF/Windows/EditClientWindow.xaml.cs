@@ -30,9 +30,9 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (ValidateData())
             {
-                var clientExists = await _clientService.GetByIdAsync(_updatedClient.Id);
+                var clientExists = await _clientService.ExistsAsync(_updatedClient.Id);
 
-                if (clientExists == null)
+                if (!clientExists)
                 {
                     MessageBox.Show("The client no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;

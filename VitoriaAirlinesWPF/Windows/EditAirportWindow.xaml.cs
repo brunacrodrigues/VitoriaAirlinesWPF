@@ -56,9 +56,9 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (ValidateData())
             {
-                var airportExists = await _airportService.GetByIdAsync(_updatedAirport.Id);
+                var airportExists = await _airportService.ExistsAsync(_updatedAirport.Id);
 
-                if (airportExists == null)
+                if (!airportExists)
                 {
                     MessageBox.Show("The airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;

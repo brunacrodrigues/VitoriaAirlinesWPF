@@ -2,7 +2,7 @@
 
 namespace VitoriaAirlinesLibrary.Services
 {
-    public class ClientService
+    public class ClientService : ICrudService<Client>    
     {
         ApiService _apiService;
         const string Controller = "clients";
@@ -36,6 +36,21 @@ namespace VitoriaAirlinesLibrary.Services
         {
             return _apiService.DeleteAsync($"{Controller}/{id}");
         }
-    }
+
+		public async Task<bool> ExistsAsync(int id)
+		{
+			try
+			{
+				var response = await _apiService.GetAsync<Client>($"{Controller}/{id}");
+
+				
+				return response.IsSuccess;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+	}
     
 }

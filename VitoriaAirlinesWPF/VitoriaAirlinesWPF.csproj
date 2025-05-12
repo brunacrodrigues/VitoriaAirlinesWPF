@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -17,6 +17,7 @@
     <None Remove="Resources\Icons\add.png" />
     <None Remove="Resources\Icons\delete.png" />
     <None Remove="Resources\Icons\edit.png" />
+    <None Remove="Resources\Icons\icons8-up-40.png" />
     <None Remove="Resources\location.png" />
     <None Remove="Resources\logo.png" />
     <None Remove="Resources\minimize.png" />
@@ -51,6 +52,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\flights.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\icons8-up-40.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\location.png">
@@ -116,4 +120,11 @@
     </None>
   </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Syncfusion.Grid.WPF" Version="29.1.40" />
+        <PackageReference Include="Syncfusion.SfGrid.WPF" Version="29.1.40" />
+        <PackageReference Include="Syncfusion.SfInput.WPF" Version="29.1.40" />
+        <PackageReference Include="Syncfusion.Shared.Base" Version="29.1.40" />
+        <PackageReference Include="Syncfusion.Tools.WPF" Version="29.1.40" />
+</ItemGroup>
 </Project>

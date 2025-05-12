@@ -30,35 +30,15 @@ namespace VitoriaAirlinesWPF.Pages
         {
             var selectedClient = clientsDataGrid.SelectedItem as Client;
 
-            var clientExists = await _clientService.GetByIdAsync(selectedClient.Id);
+			if (!await ClientExistsAsync(selectedClient.Id))
+				return;
 
-            if (clientExists == null)
-            {
-                MessageBox.Show("The selected client no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+			if (!ConfirmDeletion(selectedClient.FullName))
+				return;
 
-            var confirmResult = MessageBox.Show($"Are you sure you want to delete the client '{selectedClient.FullName}'?",
-                                                "Confirm Delete",
-                                                MessageBoxButton.YesNo,
-                                                MessageBoxImage.Question);
+			await DeleteClientAsync(selectedClient.Id);
 
-            if (confirmResult != MessageBoxResult.Yes)
-                return;
-
-            var response = await _clientService.DeleteAsync(selectedClient.Id);
-
-            if (response.IsSuccess)
-            {
-                MessageBox.Show("Client deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await LoadClients();
-            }
-            else
-            {
-                MessageBox.Show($"Error deleting client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-        }
+		}
 
         private void btnEditClient_Click(object sender, RoutedEventArgs e)
         {
@@ -87,7 +67,45 @@ namespace VitoriaAirlinesWPF.Pages
                 clientsDataGrid.ItemsSource = null;
                 clientsDataGrid.ItemsSource = Clients;
             }
-
         }
-    }
+
+		private async Task<bool> ClientExistsAsync(int clientId)
+		{
+			var clientExists = await _clientService.ExistsAsync(clientId);
+
+			if (!clientExists)
+			{
+				MessageBox.Show("The selected client no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool ConfirmDeletion(string clientName)
+		{
+			var confirmResult = MessageBox.Show($"Are you sure you want to delete the client '{clientName}'?",
+												"Confirm Delete",
+												MessageBoxButton.YesNo,
+												MessageBoxImage.Question);
+
+			return confirmResult == MessageBoxResult.Yes;
+		}
+
+		private async Task DeleteClientAsync(int clientId)
+		{
+			var response = await _clientService.DeleteAsync(clientId);
+
+			if (response.IsSuccess)
+			{
+				MessageBox.Show("Client deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+				await LoadClients();
+			}
+			else
+			{
+				MessageBox.Show($"Error deleting client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
+		}
+
+	}
 }
