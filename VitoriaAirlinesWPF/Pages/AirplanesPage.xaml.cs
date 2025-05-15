@@ -20,6 +20,8 @@ namespace VitoriaAirlinesWPF.Pages
 			Loaded += Page_Loaded;
 		}
 
+        #region Events
+
         private async void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             await LoadAirplanes();
@@ -60,7 +62,9 @@ namespace VitoriaAirlinesWPF.Pages
 
 		}
 
+        #endregion
 
+        #region Methods
         public async Task LoadAirplanes()
         {
             List<Airplane> Airplanes = new List<Airplane>();
@@ -113,5 +117,7 @@ namespace VitoriaAirlinesWPF.Pages
 			}
 		}
 
-	}
+        #endregion
+
+    }
 }

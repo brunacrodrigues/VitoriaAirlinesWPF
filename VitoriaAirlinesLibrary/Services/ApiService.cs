@@ -30,8 +30,9 @@ namespace VitoriaAirlinesLibrary.Services
                 PropertyNameCaseInsensitive = true
             };
 
+			_jsonSerializerOptionsDeserialize.Converters.Add(new JsonStringEnumConverter());
 
-        }
+		}
 
         public async Task<Response> GetAsync<T>(string controller)
         {

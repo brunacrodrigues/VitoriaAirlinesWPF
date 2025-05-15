@@ -36,6 +36,8 @@ namespace VitoriaAirlinesWPF.Pages
 
             if (!await AirportExistsAsync(selectedAirport.Id))
                 return;
+
+            await DeleteAirportAsync(selectedAirport.Id);
 		}
 
         private void btnEditAirport_Click(object sender, RoutedEventArgs e)

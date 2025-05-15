@@ -14,14 +14,14 @@ namespace VitoriaAirlinesWPF.Windows
     public partial class EditClientWindow : Window
     {
         private readonly ClientsPage _clientsPage;
-        private readonly Client _updatedClient;
+        private readonly Client _clientToEdit;
         ClientService _clientService;
 
-        public EditClientWindow(ClientsPage clientsPage, Client updatedClient)
+        public EditClientWindow(ClientsPage clientsPage, Client clientToEdit)
         {
             InitializeComponent();
             _clientsPage = clientsPage;
-            _updatedClient = updatedClient;
+            _clientToEdit = clientToEdit;
             _clientService = new ClientService();
             InitWindow();
         }
@@ -30,7 +30,7 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (ValidateData())
             {
-                var clientExists = await _clientService.ExistsAsync(_updatedClient.Id);
+                var clientExists = await _clientService.ExistsAsync(_clientToEdit.Id);
 
                 if (!clientExists)
                 {
@@ -38,23 +38,23 @@ namespace VitoriaAirlinesWPF.Windows
                     return;
                 }
 
-                _updatedClient.FullName = txtFullName.Text;
-                _updatedClient.Passaport = txtPassport.Text;
-                _updatedClient.Email = txtEmail.Text;
-                _updatedClient.Contact = txtContact.Text;
-
-                var response = await _clientService.UpdateAsync(_updatedClient);
-
-                if (response.IsSuccess)
+                if (!await ClientExistsAsync(_clientToEdit.Id))
                 {
-                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await _clientsPage.LoadClients();
-                    this.Close();
+                    await HandleClientNotFoundErrorAsync();
+                    return;
                 }
-                else
-                {
-                    MessageBox.Show($"Error updating client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
+                UpdateClienteData();
+
+                
+
+                
+
+                var response = await _clientService.UpdateAsync(_clientToEdit);
+                await HandleUpdateResponseAsync(response);
+
+
+               
             }
 
         }
@@ -89,10 +89,10 @@ namespace VitoriaAirlinesWPF.Windows
 
         private void InitWindow()
         {
-            txtFullName.Text = _updatedClient.FullName;
-            txtPassport.Text = _updatedClient.Passaport;
-            txtEmail.Text = _updatedClient.Email;
-            txtContact.Text = _updatedClient.Contact;
+            txtFullName.Text = _clientToEdit.FullName;
+            txtPassport.Text = _clientToEdit.Passaport;
+            txtEmail.Text = _clientToEdit.Email;
+            txtContact.Text = _clientToEdit.Contact;
         }
         private bool ValidateData()
         {
@@ -144,6 +144,48 @@ namespace VitoriaAirlinesWPF.Windows
 
             return true;
 
+        }
+
+        private async Task HandleUpdateResponseAsync(Response response)
+        {
+            if (response.IsSuccess)
+            {
+                MessageBox.Show("Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                await _clientsPage.LoadClients();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show($"Error updating client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateClienteData()
+        {
+            _clientToEdit.FullName = txtFullName.Text;
+            _clientToEdit.Passaport = txtPassport.Text;
+            _clientToEdit.Email = txtEmail.Text;
+            _clientToEdit.Contact = txtContact.Text;
+        }
+
+        private async Task HandleClientNotFoundErrorAsync()
+        {
+            MessageBox.Show("This client no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            await _clientsPage.LoadClients();
+            this.Close();
+        }
+
+        private async Task<bool> ClientExistsAsync(int clientId)
+        {
+            try
+            {
+                return await _clientService.ExistsAsync(clientId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error checking if client exists: {ex.Message}", "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
 
         #endregion

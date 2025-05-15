@@ -12,14 +12,14 @@ namespace VitoriaAirlinesWPF.Windows
     public partial class EditAirportWindow : Window
     {
         AirportsPage _airportsPage;
-        Airport _updatedAirport;
+        Airport _airportToEdit;
         AirportService _airportService;
 
-        public EditAirportWindow(AirportsPage airportsPage, Airport updatedAirport)
+        public EditAirportWindow(AirportsPage airportsPage, Airport airportToEdit)
         {
             InitializeComponent();
             _airportsPage = airportsPage;
-            _updatedAirport = updatedAirport;
+            _airportToEdit = airportToEdit;
             _airportService = new AirportService();
             InitWindow();
         }          
@@ -56,31 +56,22 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (ValidateData())
             {
-                var airportExists = await _airportService.ExistsAsync(_updatedAirport.Id);
-
-                if (!airportExists)
+                if (!await AirportExists(_airportToEdit.Id))
                 {
-                    MessageBox.Show("The airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    await HandleAirportNotFoundErrorAsync();
                     return;
                 }
 
-                _updatedAirport.IATA = txtIATA.Text;
-                _updatedAirport.Name = txtName.Text;
-                _updatedAirport.City = txtCity.Text;
-                _updatedAirport.Country = txtCountry.Text;
+                UpdateAirportData();
+               
 
-                var response = await _airportService.UpdateAsync(_updatedAirport);
+               
 
-                if (response.IsSuccess)
-                {
-                    MessageBox.Show("Airport updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await _airportsPage.LoadAirports();
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show($"Error updating airport: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                var response = await _airportService.UpdateAsync(_airportToEdit);
+
+                await HandleUpdateResponseAsync(response);
+
+                
             }
         }
 
@@ -89,10 +80,10 @@ namespace VitoriaAirlinesWPF.Windows
         #region Methods
         private void InitWindow()
         {
-            txtIATA.Text = _updatedAirport.IATA;
-            txtName.Text = _updatedAirport.Name;
-            txtCity.Text = _updatedAirport.City;
-            txtCountry.Text = _updatedAirport.Country;
+            txtIATA.Text = _airportToEdit.IATA;
+            txtName.Text = _airportToEdit.Name;
+            txtCity.Text = _airportToEdit.City;
+            txtCountry.Text = _airportToEdit.Country;
         }
 
         private bool ValidateData()
@@ -140,6 +131,48 @@ namespace VitoriaAirlinesWPF.Windows
             }
 
             return true;
+        }
+
+        private async Task HandleUpdateResponseAsync(Response response)
+        {
+            if (response.IsSuccess)
+            {
+                MessageBox.Show("Airport updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                await _airportsPage.LoadAirports();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show($"Error updating airport: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void UpdateAirportData()
+        {
+            _airportToEdit.IATA = txtIATA.Text;
+            _airportToEdit.Name = txtName.Text;
+            _airportToEdit.City = txtCity.Text;
+            _airportToEdit.Country = txtCountry.Text;
+        }
+
+        private async Task HandleAirportNotFoundErrorAsync()
+        {
+            MessageBox.Show("This airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            await _airportsPage.LoadAirports();
+            this.Close();
+        }
+
+        private async Task<bool> AirportExists(int airportId)
+        {
+            try
+            {
+                return await _airportService.ExistsAsync(airportId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error checking if airport exists: {ex.Message}", "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
         }
 
         #endregion

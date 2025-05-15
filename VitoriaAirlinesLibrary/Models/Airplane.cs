@@ -22,5 +22,7 @@
             }
 
         }
-    }
+
+        public int TotalCapacity => ExecutiveSeats + EconomicSeats;
+	}
 }

@@ -18,6 +18,7 @@
     <None Remove="Resources\Icons\delete.png" />
     <None Remove="Resources\Icons\edit.png" />
     <None Remove="Resources\Icons\icons8-up-40.png" />
+    <None Remove="Resources\Icons\tickets2.png" />
     <None Remove="Resources\location.png" />
     <None Remove="Resources\logo.png" />
     <None Remove="Resources\minimize.png" />
@@ -80,6 +81,9 @@
     </Content>
     <Content Include="Resources\Icons\tickets.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\tickets2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

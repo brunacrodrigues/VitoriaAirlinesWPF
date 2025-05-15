@@ -29,7 +29,7 @@ namespace VitoriaAirlinesWPF
 
         private void btnFlights_Click(object sender, RoutedEventArgs e)
         {
-
+            frameContainer.Navigate(new FlightsPage());
         }
 
         private void btnAirplanes_Click(object sender, RoutedEventArgs e)
