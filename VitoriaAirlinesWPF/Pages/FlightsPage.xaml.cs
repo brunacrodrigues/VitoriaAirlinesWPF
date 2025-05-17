@@ -22,8 +22,10 @@ namespace VitoriaAirlinesWPF.Pages
 
 		private void btnSellTickets_Click(object sender, RoutedEventArgs e)
 		{
-
-		}
+			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
+			SellTicketsWindow sellTicketsWindow = new SellTicketsWindow(selectedFlight);
+			sellTicketsWindow.ShowDialog();
+        }
 
 		private async void btnDeleteFlight_Click(object sender, RoutedEventArgs e)
 		{

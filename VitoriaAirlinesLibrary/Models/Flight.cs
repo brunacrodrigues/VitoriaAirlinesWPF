@@ -55,5 +55,7 @@ namespace VitoriaAirlinesLibrary.Models
 				return ticket?.Price;
 			}
 		}
+
+		public string FlightRoute => $"{Origin.IATA} -> {Destination.IATA}";
 	}
 }

@@ -17,8 +17,10 @@ namespace VitoriaAirlinesLibrary.Models
 		{
 			get
 			{
-				return $"{Row}{Letter}, {Type}";
+				return $"{Row}{Letter}";
 			}
 		}
-	}
+
+        
+    }
 }

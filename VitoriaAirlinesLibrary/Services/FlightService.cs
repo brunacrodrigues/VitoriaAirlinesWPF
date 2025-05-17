@@ -125,7 +125,12 @@ namespace VitoriaAirlinesLibrary.Services
 				return false;
 			}
 		}
-	}
+
+        public Task<Response> GetTicketsForFlight(int flightId)
+        {
+            return _apiService.GetAsync<List<Ticket>>($"{Controller}/{flightId}/tickets");
+        }
+    }
 
 	
 }
