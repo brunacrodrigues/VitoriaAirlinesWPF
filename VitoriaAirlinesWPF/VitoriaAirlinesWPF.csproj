@@ -19,6 +19,7 @@
     <None Remove="Resources\Icons\delete.png" />
     <None Remove="Resources\Icons\edit.png" />
     <None Remove="Resources\Icons\icons8-up-40.png" />
+    <None Remove="Resources\Icons\seat.png" />
     <None Remove="Resources\Icons\tickets2.png" />
     <None Remove="Resources\location.png" />
     <None Remove="Resources\logo.png" />
@@ -81,6 +82,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\search.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\seat.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\tickets.png">

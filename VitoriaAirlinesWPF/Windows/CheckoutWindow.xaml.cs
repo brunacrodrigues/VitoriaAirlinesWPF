@@ -18,6 +18,7 @@ namespace VitoriaAirlinesWPF.Windows
         PaymentService _paymentService;
         TicketService _ticketService;
         SellTicketsWindow _sellTicketsWindow;
+        Flight _flight;
         public CheckoutWindow(List<Ticket> ticketsToPurchase, SellTicketsWindow sellTicketsWindow)
         {
             InitializeComponent();
@@ -37,6 +38,7 @@ namespace VitoriaAirlinesWPF.Windows
             _paymentService = new PaymentService(stripeSecretKey);
             _ticketService = new TicketService();
             _sellTicketsWindow = sellTicketsWindow;
+            _flight = TicketsToPurchase.First().Flight;
         }
 
         #region Events
@@ -160,12 +162,15 @@ namespace VitoriaAirlinesWPF.Windows
             btnClose.IsEnabled = true;
         }
 
-        private void FinalizePurchase()
+        private async void FinalizePurchase()
         {
             TicketsToPurchase.Clear();
             _sellTicketsWindow.RefreshDataGridCart();
             MessageBox.Show("Purchase completed successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            /*_sellTicketsWindow.LoadAvailableSeatsAsync();*/ // sem await aqui pois o método não precisa travar a UI
+            if (_sellTicketsWindow.TicketsPage != null)
+            {
+                await _sellTicketsWindow.TicketsPage.LoadFlightTicketsAsync(_flight); 
+            }
             Close();
         }
 

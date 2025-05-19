@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using VitoriaAirlinesLibrary.Enums;
 using VitoriaAirlinesLibrary.Models;
 using VitoriaAirlinesLibrary.Services;
+using VitoriaAirlinesWPF.Pages;
 
 namespace VitoriaAirlinesWPF.Windows
 {
@@ -23,13 +24,16 @@ namespace VitoriaAirlinesWPF.Windows
         List<Ticket> TicketsToPurchase = new List<Ticket>();
         List<Seat> SeatsToAssign = new List<Seat>();
 
+        public TicketsPage TicketsPage { get; set; }
 
-        public SellTicketsWindow(Flight selectedFlight)
+
+        public SellTicketsWindow(Flight selectedFlight, TicketsPage ticketsPage = null)
         {
             InitializeComponent();
             _selectedFlight = selectedFlight;
             _clientService = new ClientService();
             _flightService = new FlightService();
+            TicketsPage = ticketsPage;
             Loaded += Window_Loaded;
         }
 

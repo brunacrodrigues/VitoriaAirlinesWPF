@@ -70,5 +70,15 @@ namespace VitoriaAirlinesLibrary.Models
                 return $"{originIata} -> {destinationIata}";
             }
         }
+
+		[JsonIgnore]
+        public string FlightDisplayInfo
+        {
+            get
+            {
+                string departureFormatted = DepartureDateTime.ToString("dd/MM/yyyy HH:mm");
+                return $"{FlightNumber} | {FlightRoute} | {departureFormatted}"; 
+            }
+        }
     }
 }
