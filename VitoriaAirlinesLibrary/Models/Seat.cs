@@ -11,16 +11,10 @@ namespace VitoriaAirlinesLibrary.Models
         public SeatType Type { get; set; }
         public bool IsAvailable { get; set; }
 
-        public Airplane Airplane { get; set; }
+        public int AirplaneId { get; set; }
 
-		public string Name
-		{
-			get
-			{
-				return $"{Row}{Letter}";
-			}
-		}
+        [JsonIgnore]
+        public string Name => $"{Row}{Letter}";
 
-        
     }
 }

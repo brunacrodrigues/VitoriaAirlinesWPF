@@ -69,15 +69,32 @@ namespace VitoriaAirlinesWPF.Pages
 		{
 			try
 			{
-				var response = await _flightService.GetAllAsync();
-				if (response.IsSuccess && response.Result is List<Flight> flights)
+				var flightsResponse = await _flightService.GetAllAsync();
+				if (flightsResponse.IsSuccess && flightsResponse.Result is List<Flight> flights)
 				{
-				
-					flightsDataGrid.ItemsSource = flights;
+                    var tasks = flights.Select(async flight =>
+                    {
+                        var ticketsResponse = await _flightService.GetTicketsForFlightAsync(flight.Id);
+
+						if (ticketsResponse.IsSuccess && ticketsResponse.Result is List<Ticket> tickets)
+						{
+                            flight.Tickets = tickets;
+                        }
+						else
+						{
+                            MessageBox.Show($"Error loading fligh tockets: {(ticketsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+							return;
+                        }
+                        
+                    });
+
+                    await Task.WhenAll(tasks);
+
+                    flightsDataGrid.ItemsSource = flights;
 				}
 				else
 				{
-					MessageBox.Show($"Error loading flights: {(response.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					MessageBox.Show($"Error loading flights: {(flightsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
 					flightsDataGrid.ItemsSource = null; 
 				}
 			}

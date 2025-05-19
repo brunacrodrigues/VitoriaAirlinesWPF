@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VitoriaAirlinesLibrary.Enums
+﻿namespace VitoriaAirlinesLibrary.Enums
 {
     public enum PaymentMethod
     {
-        CreditCard,
+        Card,
         PayPal,
         MBWay
     }

@@ -134,7 +134,7 @@
                     </DataGridTextColumn>
 
                     <!-- Executive Price (Binding - Show ticket price where ticket.Flight == this fligh) -->
-                    <DataGridTextColumn Header="Executive Price" Binding="{Binding ExecutiveTicketPrice}" Width="auto" MinWidth="130" IsReadOnly="True">
+                    <DataGridTextColumn Header="Executive Price" Binding="{Binding ExecutiveTicketPrice, StringFormat=C, ConverterCulture='pt-PT'}" Width="auto" MinWidth="130" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="Wrap"/>
@@ -143,7 +143,7 @@
                     </DataGridTextColumn>
 
                     <!-- Executive Price (Binding - Show ticket price where ticket.Flight == this fligh) -->
-                    <DataGridTextColumn Header="Economic Price" Binding="{Binding EconomicTicketPrice}" Width="auto" MinWidth="130" IsReadOnly="True">
+                    <DataGridTextColumn Header="Economic Price" Binding="{Binding EconomicTicketPrice, StringFormat=C, ConverterCulture='pt-PT'}" Width="auto" MinWidth="130" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="Wrap"/>

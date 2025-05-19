@@ -126,11 +126,48 @@ namespace VitoriaAirlinesLibrary.Services
 			}
 		}
 
-        public Task<Response> GetTicketsForFlight(int flightId)
+        public Task<Response> GetTicketsForFlightAsync(int flightId)
         {
             return _apiService.GetAsync<List<Ticket>>($"{Controller}/{flightId}/tickets");
         }
-    }
 
-	
+
+        public async Task<Response> CheckIfClientHasTicketFlightAsync(int flightId, int clientId)
+        {
+            try
+            {
+                var ticketsResponse = await GetTicketsForFlightAsync(flightId);
+
+                if (!ticketsResponse.IsSuccess || ticketsResponse.Result is not List<Ticket> tickets)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Result = false,
+                        Message = ticketsResponse.Message ?? "Failed to retrieve tickets."
+                    };
+                }
+
+                bool hasTicket = tickets.Any(t => t.ClientId == clientId);
+
+                return new Response
+                {
+                    IsSuccess = true,
+                    Result = hasTicket,
+                    Message = "Client booking status checked."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Result = false,
+                    Message = $"Unexpected error: {ex.Message}"
+                };
+            }
+        }
+
+    }
 }
+

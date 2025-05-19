@@ -9,27 +9,25 @@ namespace VitoriaAirlinesLibrary.Models
 		public int Id { get; set; }
 		public string FlightNumber { get; set; }
 
-		[JsonIgnore]
-		public Airplane Airplane { get; set; } 
-		public int AirplaneId { get; set; }
+        [JsonIgnore]
+        public Airplane Airplane { get; set; }
+        public int AirplaneId { get; set; }
 
-
-		[JsonIgnore]
-		public Airport Origin { get; set; } 
 		public int OriginAirportId { get; set; }
 
-
-		[JsonIgnore]
-		public Airport Destination { get; set; } 
 		public int DestinationAirportId { get; set; }
 
 		public DateTime DepartureDate { get; set; }
 		public TimeSpan DepartureTime { get; set; }
 		public TimeSpan Duration { get; set; }
 
+		[JsonIgnore]
 		public decimal ExecutivePrice { get; set; }
 
+		[JsonIgnore]	
 		public decimal EconomicPrice { get; set; }
+
+		[JsonIgnore]
 		public List<Ticket> Tickets { get; set; }
 
 		public DateTime DepartureDateTime => DepartureDate.Date + DepartureTime;
@@ -56,6 +54,21 @@ namespace VitoriaAirlinesLibrary.Models
 			}
 		}
 
-		public string FlightRoute => $"{Origin.IATA} -> {Destination.IATA}";
-	}
+		[JsonIgnore]
+        public Airport Origin { get; set; }
+
+        [JsonIgnore]
+        public Airport Destination { get; set; }
+
+        [JsonIgnore]
+        public string FlightRoute
+        {
+            get
+            {
+                string originIata = this.Origin?.IATA ?? "N/A";
+                string destinationIata = this.Destination?.IATA ?? "N/A";
+                return $"{originIata} -> {destinationIata}";
+            }
+        }
+    }
 }

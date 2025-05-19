@@ -33,10 +33,10 @@ namespace VitoriaAirlinesWPF.Windows
             Loaded += Window_Loaded;
         }
 
+        #region Events
         private void btnRegisterNewClient_Click(object sender, RoutedEventArgs e)
         {
             comboBoxClients.SelectedItem = null;
-
 
 
             txtFullName.IsEnabled = true;
@@ -53,6 +53,152 @@ namespace VitoriaAirlinesWPF.Windows
 
         }
 
+        private async void btnAddPassenger_Click(object sender, RoutedEventArgs e)
+        {
+
+            SeatsToAssign = listBoxAvailableSeats.SelectedItems.Cast<Seat>().ToList();
+
+            if (!ValidateSeatsSelection()) return;
+
+            var client = await GetOrCreateClientAsync();
+            if (client == null) return;
+
+            if (!await CheckClientDuplicateTicket(client)) return;
+
+            AssignSeatToClient(client);
+            FinalizePassengerAddition();
+
+        }
+
+        private void btnCancelPurchase_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TicketsToPurchase.Any())
+            {
+                MessageBox.Show("The cart is already empty.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+
+            var result = MessageBox.Show("Are you sure you want to cancel the current purchase? All items in the cart will be removed.",
+                                         "Cancel Purchase Confirmation",
+                                         MessageBoxButton.YesNo,
+                                         MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                ReleaseSeatsFromCart();
+            }
+
+
+            TicketsToPurchase.Clear();
+
+
+            RefreshDataGridCart();
+            LoadListBoxAvailableSeats();
+
+            MessageBox.Show("Purchase has been cancelled. The cart is now empty.", "Purchase Cancelled", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void btnRestore_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowState = WindowState.Normal;
+
+                btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore.png", UriKind.Relative));
+            }
+            else
+            {
+                WindowState = WindowState.Maximized;
+
+                btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore2.png", UriKind.Relative));
+            }
+        }
+
+
+        private void btnMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+            if (comboBoxSeatType.SelectedItem != null)
+            {
+                ReleaseSeatsFromCart();
+            }
+
+            TicketsToPurchase.Clear();
+
+
+            RefreshDataGridCart();
+            LoadListBoxAvailableSeats();
+
+            Close();
+        }
+
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            txtFlightNumber.Text = _selectedFlight.FlightNumber;
+            txtFlightRouteInfo.Text = _selectedFlight.FlightRoute;
+
+            await LoadCombos();
+            await LoadAvailableSeatsAsync();
+        }
+
+
+        private void btnProceedToCheckout_Click(object sender, RoutedEventArgs e)
+        {
+            if (TicketsToPurchase.Count > 0)
+            {
+                CheckoutWindow checkoutWindow = new CheckoutWindow(TicketsToPurchase, this);
+                checkoutWindow.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No tickets in the cart.", "Attention", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+        }
+
+
+        private void btnRemoveFromCart_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveTicketFromCart();
+
+        }
+
+
+        private void comboBoxClients_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            txtFullName.IsEnabled = false;
+            txtPassport.IsEnabled = false;
+            txtEmail.IsEnabled = false;
+            txtContact.IsEnabled = false;
+
+            if (comboBoxClients.SelectedItem != null)
+            {
+                Client client = comboBoxClients.SelectedItem as Client;
+                txtFullName.Text = client.FullName;
+                txtPassport.Text = client.Passaport;
+                txtEmail.Text = client.Email;
+                txtContact.Text = client.Contact;
+            }
+
+        }
+
+
+        private void comboBoxSeatType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            LoadListBoxAvailableSeats();
+        }
+
+        #endregion
+
+
+        #region Methods
         private void ClearInput()
         {
             txtFullName.Text = string.Empty;
@@ -61,71 +207,74 @@ namespace VitoriaAirlinesWPF.Windows
             txtContact.Text = string.Empty;
         }
 
-        private async void btnAddPassenger_Click(object sender, RoutedEventArgs e)
+        
+
+        private void FinalizePassengerAddition()
         {
+            RefreshDataGridCart();
+            ClearInput();
+            comboBoxClients.SelectedItem = null;
+            LoadListBoxAvailableSeats();
+        }
 
-            SeatsToAssign = listBoxAvailableSeats.SelectedItems.Cast<Seat>().ToList();
+        private void AssignSeatToClient(Client client)
+        {
+            var seatToAssign = SeatsToAssign.First();
+            CreateAndAddTicketToCart(seatToAssign, client);
+            SeatsToAssign.Remove(seatToAssign);
+        }
 
+        private async Task<bool> CheckClientDuplicateTicket(Client client)
+        {
+            var checkResponse = await _flightService.CheckIfClientHasTicketFlightAsync(_selectedFlight.Id, client.Id);
+
+            if (checkResponse.IsSuccess && checkResponse.Result is bool hasTicket && hasTicket)
+            {
+                MessageBox.Show("This client already has a ticket for this flight.", "Duplicate Ticket", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<Client?> GetOrCreateClientAsync()
+        {
+            if (comboBoxClients.SelectedItem is Client selectedClient)
+                return selectedClient;
+
+            if (!ValidateNewClientData())
+                return null;
+
+            var newClient = new Client
+            {
+                FullName = txtFullName.Text,
+                Passaport = txtPassport.Text,
+                Email = txtEmail.Text.Replace(" ", "").Trim(),
+                Contact = txtContact.Text
+            };
+
+            var response = await _clientService.CreateAsync(newClient);
+            if (!response.IsSuccess)
+            {
+                MessageBox.Show($"Error adding client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+
+            await LoadClientsAsync();
+            return newClient;
+        }
+
+        private bool ValidateSeatsSelection()
+        {
             if (SeatsToAssign.Count == 0)
             {
                 MessageBox.Show("Please select at least one seat.", "No seat selected", MessageBoxButton.OK, MessageBoxImage.Warning);
-              return;
+                return false;
             }
-
-            Client client = null;
-
-            if (comboBoxClients.SelectedItem != null)
-            {
-                client = comboBoxClients.SelectedItem as Client;
-            }
-            else
-            {
-                if (ValidateNewClientData())
-                {
-                    client = new Client
-                    {
-                        FullName = txtFullName.Text,
-                        Passaport = txtPassport.Text,
-                        Email = txtEmail.Text.Replace(" ", "").Trim(),
-                        Contact = txtContact.Text,
-                    };
-
-                    var response = await _clientService.CreateAsync(client);
-
-                    if (response.IsSuccess)
-                    {
-                        await LoadClientsAsync();
-                    }
-                    else
-                    {
-                        MessageBox.Show($"Error adding client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            if (client != null)
-            {
-                Seat seatToAssign = SeatsToAssign.First();
-
-                CreateAndAddTicketToCart(seatToAssign, client);
-
-                SeatsToAssign.Remove(seatToAssign);
-                RefreshDataGridCart();
-
-                ClearInput();                
-            }
-
-            comboBoxClients.SelectedItem = null;
-            LoadListBoxAvailableSeats();
-            
+            return true;
         }
 
-        private void RefreshDataGridCart()
+        public void RefreshDataGridCart()
         {
             dataGridCart.ItemsSource = null;
             dataGridCart.ItemsSource = TicketsToPurchase;
@@ -139,7 +288,6 @@ namespace VitoriaAirlinesWPF.Windows
                 MessageBox.Show($"Internal error: Seat {selectedSeat.Name} not found in master list.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
 
 
             if (TicketsToPurchase.Any(t => t.Seat.Id == seat.Id))
@@ -183,98 +331,25 @@ namespace VitoriaAirlinesWPF.Windows
             selectedSeat.IsAvailable = false;
         }
 
-        private void btnCancelPurchase_Click(object sender, RoutedEventArgs e)
+
+        private void ReleaseSeatsFromCart()
         {
-            if (!TicketsToPurchase.Any()) 
+            foreach (var ticketInCart in TicketsToPurchase)
             {
-                MessageBox.Show("The cart is already empty.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            
-            var result = MessageBox.Show("Are you sure you want to cancel the current purchase? All items in the cart will be removed.",
-                                         "Cancel Purchase Confirmation",
-                                         MessageBoxButton.YesNo,
-                                         MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-               
-
-                foreach (var ticketInCart in TicketsToPurchase)
+                Seat seatToMakeAvailable = AvailableSeats.FirstOrDefault(s => s.Id == ticketInCart.Seat.Id);
+                if (seatToMakeAvailable != null)
                 {
-                    Seat seatToMakeAvailable = AvailableSeats.FirstOrDefault(s => s.Id == ticketInCart.Seat.Id);
-                    if (seatToMakeAvailable != null)
-                    {
-                        seatToMakeAvailable.IsAvailable = true;
+                    seatToMakeAvailable.IsAvailable = true;
 
-                    }
-                    else
-                    {
-                        MessageBox.Show("The seat could not be found.", "Seat Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
                 }
-
-                
-                TicketsToPurchase.Clear();
-
-                
-                RefreshDataGridCart();    
-                LoadListBoxAvailableSeats(); 
-
-                MessageBox.Show("Purchase has been cancelled. The cart is now empty.", "Purchase Cancelled", MessageBoxButton.OK, MessageBoxImage.Information);
+                else
+                {
+                    MessageBox.Show("The seat could not be found.", "Seat Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
             }
         }
-
-        private void btnRestore_Click(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
-            {
-                WindowState = WindowState.Normal;
-
-                btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore.png", UriKind.Relative));
-            }
-            else
-            {
-                WindowState = WindowState.Maximized;
-
-                btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore2.png", UriKind.Relative));
-            }
-        }
-
-        private void btnMinimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void btnClose_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private async void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            txtFlightNumber.Text = _selectedFlight.FlightNumber;
-            txtFlightRouteInfo.Text = _selectedFlight.FlightRoute;
-
-            await LoadCombos();
-            await LoadAvailableSeatsAsync();
-        }
-
-
-        private void btnProceedToCheckout_Click(object sender, RoutedEventArgs e)
-        {
-            CheckoutWindow checkoutWindow = new CheckoutWindow();
-            checkoutWindow.ShowDialog();
-        }
-
-        private void btnRemoveFromCart_Click(object sender, RoutedEventArgs e)
-        {
-            RemoveTicketFromCart();
-
-        }
-
+        
         private void RemoveTicketFromCart()
         {
             if (dataGridCart.SelectedItem == null)
@@ -341,29 +416,7 @@ namespace VitoriaAirlinesWPF.Windows
             }
         }
 
-        private void comboBoxSeatType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            LoadListBoxAvailableSeats();
-        }
-
-        private void comboBoxClients_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            txtFullName.IsEnabled = false;
-            txtPassport.IsEnabled = false;
-            txtEmail.IsEnabled = false;
-            txtContact.IsEnabled = false;
-
-            if (comboBoxClients.SelectedItem != null)
-            {
-                Client client = comboBoxClients.SelectedItem as Client;
-                txtFullName.Text = client.FullName;
-                txtPassport.Text = client.Passaport;
-                txtEmail.Text = client.Email;
-                txtContact.Text = client.Contact;
-            }
-
-        }
-
+       
         private bool ValidateNewClientData()
         {
             string email = txtEmail.Text.Replace(" ", "").Trim();
@@ -416,19 +469,18 @@ namespace VitoriaAirlinesWPF.Windows
 
         }
 
-        private async Task LoadAvailableSeatsAsync()
+        public async Task LoadAvailableSeatsAsync()
         {
-            DisableControls();
+            DisableUI();
             panelSeatLoading.Visibility = Visibility.Visible;
 
 
             try
-
             {
-                var ticketsResponse = await _flightService.GetTicketsForFlight(_selectedFlight.Id);
+                var ticketsResponse = await _flightService.GetTicketsForFlightAsync(_selectedFlight.Id);
                 if (ticketsResponse.IsSuccess && ticketsResponse.Result is List<Ticket> tickets)
                 {
-                    AvailableSeats = tickets.Where(t => t.Client == null).Select(t => t.Seat).Where(s => s != null && s.IsAvailable).ToList();
+                    AvailableSeats = tickets.Where(t => t.ClientId == null).Select(t => t.Seat).Where(s => s != null && s.IsAvailable).ToList();
                 }
                 else
                 {
@@ -449,34 +501,37 @@ namespace VitoriaAirlinesWPF.Windows
                     comboBoxSeatType.SelectedIndex = 0;
                 }
 
-                EnableControls();
+                EnableUI();
             }
 
         }
 
         private void LoadListBoxAvailableSeats()
         {
-            SeatType seatType = (SeatType)comboBoxSeatType.SelectedItem;
+            if (comboBoxSeatType.SelectedItem != null)
+            {
+                SeatType seatType = (SeatType)comboBoxSeatType.SelectedItem;
+                List<Seat> SeatsToDisplay = AvailableSeats.Where(s => s.Type == seatType && s.IsAvailable).ToList();
 
-            List<Seat> SeatsToDisplay = AvailableSeats.Where(s => s.Type == seatType && s.IsAvailable).ToList();
-
-            listBoxAvailableSeats.ItemsSource = null;
-            listBoxAvailableSeats.ItemsSource = SeatsToDisplay;
-            listBoxAvailableSeats.DisplayMemberPath = "Name";
+                listBoxAvailableSeats.ItemsSource = null;
+                listBoxAvailableSeats.ItemsSource = SeatsToDisplay;
+                listBoxAvailableSeats.DisplayMemberPath = "Name";
+            }
 
         }
 
-        private void DisableControls()
+        private void DisableUI()
         {
             comboBoxSeatType.IsEnabled = false;
 
         }
 
-        private void EnableControls()
+        private void EnableUI()
         {
             comboBoxSeatType.IsEnabled = true;
         }
 
+        #endregion
 
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace VitoriaAirlinesLibrary.Models
+﻿using System.Text.Json.Serialization;
+
+namespace VitoriaAirlinesLibrary.Models
 {
     public class Airplane
     {
@@ -12,17 +14,13 @@
 
         public int EconomicSeats { get; set; }
 
+        [JsonIgnore]
         public List<Seat> Seats { get; set; }
 
-        public string StatusText
-        {
-            get
-            {
-                return this.IsActive ? "Active" : "Inactive";
-            }
+        [JsonIgnore]
+        public string StatusText => IsActive ? "Active" : "Inactive";
 
-        }
-
+        [JsonIgnore]
         public int TotalCapacity => ExecutiveSeats + EconomicSeats;
 	}
 }
