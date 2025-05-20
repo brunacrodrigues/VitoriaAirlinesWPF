@@ -13,12 +13,15 @@ namespace VitoriaAirlinesWPF.Pages
     {
         FlightService _flightService;
         ClientService _clientService;
+        TicketService _ticketService;
+
         List<Ticket> TicketsToDisplay = new List<Ticket>();
         public TicketsPage()
         {
             InitializeComponent();
             _flightService = new FlightService();
             _clientService = new ClientService();
+            _ticketService = new TicketService();
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -59,9 +62,39 @@ namespace VitoriaAirlinesWPF.Pages
 
         }
 
-        private void btnCancelTicket_Click(object sender, RoutedEventArgs e)
+        private async void btnCancelTicket_Click(object sender, RoutedEventArgs e)
         {
+            var selectedTicket = dataGridTickets.SelectedItem as Ticket;
+            selectedTicket.Flight = comboFlights.SelectedItem as Flight;
 
+            if (selectedTicket.Flight.DepartureDateTime <= DateTime.Now)
+            {
+                MessageBox.Show("The ticket can't be cancelled after a flight has departed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+                var confirmResult = MessageBox.Show($"Are you sure you want to cancel the ticket '{selectedTicket.Seat.Name}'?",
+                                                    "Confirm Cancelation",
+                                                    MessageBoxButton.YesNo,
+                                                    MessageBoxImage.Question);
+
+                if(confirmResult == MessageBoxResult.Yes)
+                {
+
+                    var response = await _ticketService.CancelTicket(selectedTicket.Id);
+
+                    if(response.IsSuccess)
+                    {
+                        await LoadFlightTicketsAsync(selectedTicket.Flight);
+
+                        MessageBox.Show("Ticket cancelled successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Failed to cancel ticket.\nReason: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+            }
+           
         }
 
         public async Task LoadFlightTicketsAsync(Flight flight)

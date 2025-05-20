@@ -21,10 +21,10 @@ namespace VitoriaAirlinesLibrary.Models
 		public TimeSpan DepartureTime { get; set; }
 		public TimeSpan Duration { get; set; }
 
-		[JsonIgnore]
+		
 		public decimal ExecutivePrice { get; set; }
 
-		[JsonIgnore]	
+			
 		public decimal EconomicPrice { get; set; }
 
 		[JsonIgnore]
@@ -33,10 +33,10 @@ namespace VitoriaAirlinesLibrary.Models
 		public DateTime DepartureDateTime => DepartureDate.Date + DepartureTime;
 		public DateTime ArrivalDateTime => DepartureDateTime + Duration;
 
-		//public int AvailableSeats => Tickets?.Count(t => t.Client == null) ?? 0;
+        //public int AvailableSeats => Tickets?.Count(t => t.Client == null) ?? 0;
 
-		
-		public decimal? ExecutiveTicketPrice
+        [JsonIgnore]
+        public decimal? ExecutiveTicketPrice
 		{
 			get
 			{
@@ -45,6 +45,7 @@ namespace VitoriaAirlinesLibrary.Models
 			}
 		}
 
+		[JsonIgnore]
 		public decimal? EconomicTicketPrice
 		{
 			get

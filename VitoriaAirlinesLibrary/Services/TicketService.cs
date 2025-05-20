@@ -42,5 +42,10 @@ namespace VitoriaAirlinesLibrary.Services
         {
             return _apiService.GetAsync<Ticket>($"{Controller}/availableByFlightAndSeat?flightId={flightId}&seatId={seatId}");
         }
+
+        public Task<Response> CancelTicket(int id)
+        {
+            return _apiService.PutAsync<object>($"{Controller}/{id}/cancel", null);
+        }
     }
 }
