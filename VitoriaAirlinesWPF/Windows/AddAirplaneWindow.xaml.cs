@@ -40,7 +40,7 @@ namespace VitoriaAirlinesWPF.Windows
                 {
 					MessageBox.Show("Airplane model created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-					await _airplanesPage.LoadAirplanes();
+					await _airplanesPage.LoadAirplanesAsync();
 
 					this.Close();
 				}

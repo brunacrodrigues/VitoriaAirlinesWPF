@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Syncfusion.UI.Xaml.Grid;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using VitoriaAirlinesLibrary.Models;
 using VitoriaAirlinesLibrary.Services;
@@ -16,8 +17,10 @@ namespace VitoriaAirlinesWPF.Windows
 		FlightService _flightService;
 		AirportService _airportService;
 		AirplaneService _airplaneService;
+		EmailService _emailService;
+		bool hasSoldTickets;
 
-		public EditFlightWindow(FlightsPage flightsPage, Flight flightToEdit)
+        public EditFlightWindow(FlightsPage flightsPage, Flight flightToEdit)
 		{
 			InitializeComponent();
 			_flightsPage = flightsPage;
@@ -25,27 +28,86 @@ namespace VitoriaAirlinesWPF.Windows
 			_flightService = new FlightService();
 			_airportService = new AirportService();
 			_airplaneService = new AirplaneService();
-			Loaded += Window_Loaded;
+			_emailService = new EmailService();
+            hasSoldTickets = _flightToEdit.Tickets.Any(t => t.ClientId != null);
+            Loaded += Window_Loaded;
 		}
 
 		private async void btnSaveFlight_Click(object sender, RoutedEventArgs e)
 		{
-			if (ValidateData())
+			if (!ValidateData())
+				return;
+
+			if (!await FlightExistsAsync(_flightToEdit.Id))
 			{
-				if (!await FlightExistsAsync(_flightToEdit.Id))
+				await HandleFlightNotFoundErrorAsync();
+				return;
+			}
+
+			TimeSpan originalDepartureTime = _flightToEdit.DepartureTime;
+			TimeSpan originalDuration = _flightToEdit.Duration;
+
+			UpdateFlightModel();
+
+			bool departureOrDurationChanged = _flightToEdit.DepartureTime != originalDepartureTime ||
+													 _flightToEdit.Duration != originalDuration;
+
+			var updateResponse = await _flightService.UpdateAsync(_flightToEdit);
+			if (updateResponse.IsSuccess)
+			{
+				MessageBox.Show("Flight updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+				if (departureOrDurationChanged)
 				{
-					await HandleFlightNotFoundErrorAsync();
-					return;
+					await NotifyPassengersIfChangedAsync(_flightToEdit);
 				}
 
-				UpdateFlightModel();
 
-				var response = await _flightService.UpdateAsync(_flightToEdit);
-
-				await HandleUpdateResponseAsync(response);
+				await _flightsPage.LoadFlightsAsync();
+				Close();
+			}
+			else
+			{
+				await HandleUpdateResponseAsync(updateResponse);
 			}
 		}
-		
+
+		private async Task NotifyPassengersIfChangedAsync(Flight updatedFlight)
+		{
+			var clientsResponse = await _flightService.GetClientsForFlightAsync(updatedFlight.Id);
+
+			if (clientsResponse.IsSuccess)
+			{
+				if (clientsResponse.Result is List<Client> flightPassengers && flightPassengers.Any())
+				{
+					bool success = await _emailService.NotifyPassengersAboutFlightChangesAsync(flightPassengers, updatedFlight);
+
+					if (!success)
+					{
+						MessageBox.Show("Error notifying flight passengers.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+						return;
+					}
+
+					MessageBox.Show("Flight passengers were notified about flight changes.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+				}
+
+				else
+				{
+					MessageBox.Show($"Error getting flight passengers: {clientsResponse.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+					return;
+				}
+			}
+		}
+
+		private void DisableUI()
+		{
+            comboBoxOrigin.IsEnabled = false;
+            comboBoxDestination.IsEnabled = false;
+            dpDepartureDate.IsEnabled = false;
+            ExecutivePriceUpDown.IsEnabled = false;
+            EconomicPriceUpDown.IsEnabled = false;
+           
+        }
 
 		private void LoadFlightData()
 		{
@@ -67,11 +129,11 @@ namespace VitoriaAirlinesWPF.Windows
 				tpDepartureTime.Value = DateTime.Today.Add(_flightToEdit.DepartureTime);
 			}
 
-			
+
 			DurationHoursUpDown.Value = _flightToEdit.Duration.Hours;
 			DurationMinutesUpDown.Value = _flightToEdit.Duration.Minutes;
 
-			
+
 			ExecutivePriceUpDown.Value = (double)_flightToEdit.ExecutiveTicketPrice;
 			EconomicPriceUpDown.Value = (double)_flightToEdit.EconomicTicketPrice;
 		}
@@ -103,7 +165,7 @@ namespace VitoriaAirlinesWPF.Windows
 		private async Task HandleFlightNotFoundErrorAsync()
 		{
 			MessageBox.Show("This flight no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			await _flightsPage.LoadFlights();
+			await _flightsPage.LoadFlightsAsync();
 			this.Close();
 		}
 
@@ -113,7 +175,7 @@ namespace VitoriaAirlinesWPF.Windows
 			if (response.IsSuccess)
 			{
 				MessageBox.Show("Flight updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-				await _flightsPage.LoadFlights();
+				await _flightsPage.LoadFlightsAsync();
 				this.Close();
 			}
 			else
@@ -163,29 +225,44 @@ namespace VitoriaAirlinesWPF.Windows
 			lblAvailableSeatsInfo.Visibility = Visibility.Hidden;
 			await LoadComboDataAsync();
 			LoadFlightData();
+			if (hasSoldTickets)
+			{
+				DisableUI(); 
+			}
+
+        }
+
+		private async Task<bool> FlightExistsAsync(int flightId)
+		{
+			try
+			{
+				return await _flightService.ExistsAsync(flightId);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"Error checking if flight exists: {ex.Message}", "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return false;
+			}
 		}
 
-	private async Task<bool> FlightExistsAsync(int flightId)
-	{
-		try
-		{
-			return await _flightService.ExistsAsync(flightId);
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show($"Error checking if flight exists: {ex.Message}", "Service Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return false;
-		}
-	}
-
-	private async Task LoadComboDataAsync()
+		private async Task LoadComboDataAsync()
 		{
 			try
 			{
 				var airplanesResponse = await _airplaneService.GetAllAsync();
 				if (airplanesResponse.IsSuccess && airplanesResponse.Result is List<Airplane> airplanes)
 				{
-					comboBoxModels.ItemsSource = airplanes.Where(a => a.IsActive).ToList();
+					if (hasSoldTickets)
+					{
+                        comboBoxModels.ItemsSource = airplanes.Where(
+							a => a.IsActive && a.TotalCapacity >= _flightToEdit.Tickets.Count).ToList();
+                    }
+					else
+					{
+                        comboBoxModels.ItemsSource = airplanes.Where(a => a.IsActive).ToList();
+
+                    }
+					
 					comboBoxModels.DisplayMemberPath = "Model";
 					comboBoxModels.SelectedValuePath = "Id";
 				}
@@ -240,7 +317,7 @@ namespace VitoriaAirlinesWPF.Windows
 			{
 				departureDateTime = dpDepartureDate.SelectedDate.Value.Date.Add(tpDepartureTime.Value.Value.TimeOfDay);
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				MessageBox.Show($"Invalid departure date or time format: {ex.Message}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 				return false;
@@ -281,7 +358,7 @@ namespace VitoriaAirlinesWPF.Windows
 			}
 
 			// --- DURATION ---
-   
+
 			int hours = Convert.ToInt32(DurationHoursUpDown.Value ?? 0);
 			int minutes = Convert.ToInt32(DurationMinutesUpDown.Value ?? 0);
 
@@ -295,7 +372,7 @@ namespace VitoriaAirlinesWPF.Windows
 			}
 
 			//PRICES
-    
+
 			decimal executivePriceVal = Convert.ToDecimal(ExecutivePriceUpDown.Value);
 			decimal economicPriceVal = Convert.ToDecimal(EconomicPriceUpDown.Value);
 

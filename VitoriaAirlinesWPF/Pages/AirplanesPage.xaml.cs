@@ -24,7 +24,7 @@ namespace VitoriaAirlinesWPF.Pages
 
         private async void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            await LoadAirplanes();
+            await LoadAirplanesAsync();
         }
 
         private void btnAddModel_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -44,7 +44,7 @@ namespace VitoriaAirlinesWPF.Pages
 
             if (!await AirplaneExistsAsync(selectedAirplaneModel.Id))
             {
-                await LoadAirplanes();
+                await LoadAirplanesAsync();
                 return; 
             }
 
@@ -65,7 +65,7 @@ namespace VitoriaAirlinesWPF.Pages
         #endregion
 
         #region Methods
-        public async Task LoadAirplanes()
+        public async Task LoadAirplanesAsync()
         {
             List<Airplane> Airplanes = new List<Airplane>();
 
@@ -109,7 +109,7 @@ namespace VitoriaAirlinesWPF.Pages
 			if (response.IsSuccess)
 			{
 				MessageBox.Show("Model deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-				await LoadAirplanes();
+				await LoadAirplanesAsync();
 			}
 			else
 			{

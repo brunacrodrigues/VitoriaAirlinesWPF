@@ -56,7 +56,7 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (ValidateData())
             {
-                if (!await AirportExists(_airportToEdit.Id))
+                if (!await AirportExistsAsync(_airportToEdit.Id))
                 {
                     await HandleAirportNotFoundErrorAsync();
                     return;
@@ -162,7 +162,7 @@ namespace VitoriaAirlinesWPF.Windows
             this.Close();
         }
 
-        private async Task<bool> AirportExists(int airportId)
+        private async Task<bool> AirportExistsAsync(int airportId)
         {
             try
             {

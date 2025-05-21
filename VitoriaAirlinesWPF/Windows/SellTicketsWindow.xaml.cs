@@ -67,7 +67,7 @@ namespace VitoriaAirlinesWPF.Windows
             var client = await GetOrCreateClientAsync();
             if (client == null) return;
 
-            if (!await CheckClientDuplicateTicket(client)) return;
+            if (!await CheckClientDuplicateTicketAsync(client)) return;
 
             AssignSeatToClient(client);
             FinalizePassengerAddition();
@@ -148,7 +148,7 @@ namespace VitoriaAirlinesWPF.Windows
             txtFlightNumber.Text = _selectedFlight.FlightNumber;
             txtFlightRouteInfo.Text = _selectedFlight.FlightRoute;
 
-            await LoadCombos();
+            await LoadCombosAsync();
             await LoadAvailableSeatsAsync();
         }
 
@@ -228,7 +228,7 @@ namespace VitoriaAirlinesWPF.Windows
             SeatsToAssign.Remove(seatToAssign);
         }
 
-        private async Task<bool> CheckClientDuplicateTicket(Client client)
+        private async Task<bool> CheckClientDuplicateTicketAsync(Client client)
         {
             var checkResponse = await _flightService.CheckIfClientHasTicketFlightAsync(_selectedFlight.Id, client.Id);
 
@@ -390,7 +390,7 @@ namespace VitoriaAirlinesWPF.Windows
             }
         }
 
-        private async Task LoadCombos()
+        private async Task LoadCombosAsync()
         {
             comboBoxSeatType.ItemsSource = Enum.GetValues(typeof(SeatType));
             await LoadClientsAsync();

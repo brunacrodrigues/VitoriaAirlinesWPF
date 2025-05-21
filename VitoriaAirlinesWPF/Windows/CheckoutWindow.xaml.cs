@@ -180,8 +180,6 @@ namespace VitoriaAirlinesWPF.Windows
                 await _sellTicketsWindow.TicketsPage.LoadFlightTicketsAsync(_flight); 
             }
 
-            this.DialogResult = true;
-
             Close();
         }
 

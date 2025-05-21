@@ -16,6 +16,7 @@ namespace VitoriaAirlinesWPF.Windows
         Ticket _ticketToChangeSeat;
         FlightService _flightService;
         TicketService _ticketService;
+        EmailService _emailService;
         TicketsPage _ticketsPage;
 
         List<Seat> AvailableSeats = new List<Seat>();
@@ -26,6 +27,7 @@ namespace VitoriaAirlinesWPF.Windows
             _ticketToChangeSeat = ticketToChangeSeat;
             _flightService = new FlightService();
             _ticketService = new TicketService();
+            _emailService = new EmailService();
             _ticketsPage = ticketsPage;
         }
 
@@ -106,7 +108,7 @@ namespace VitoriaAirlinesWPF.Windows
             }
 
             Seat newSeat = listBoxAvailableSeats.SelectedItem as Seat;    
-            Ticket availableTicketForNewSeat = await GetAvailableTicketForSeat(newSeat);
+            Ticket availableTicketForNewSeat = await GetAvailableTicketForSeatAsync(newSeat);
             if (availableTicketForNewSeat == null)
                 return;
 
@@ -115,17 +117,15 @@ namespace VitoriaAirlinesWPF.Windows
             Seat oldSeat = _ticketToChangeSeat.Seat;
             if (oldSeat.Type == newSeat.Type)
             {
-                await ChangeSeatsWithinSameClass(oldSeat, newSeat, availableTicketForNewSeat);
+                await ChangeSeatWithinSameClassAsync(oldSeat, newSeat, availableTicketForNewSeat);
             }
             else if (oldSeat.Type == SeatType.Executive && newSeat.Type == SeatType.Economic)
             {
-                await DowngradeFromExecutiveToEconomic(oldSeat, newSeat, availableTicketForNewSeat);
-                // TODO Reembolsar e notificar passageiro.
+                await DowngradeFromExecutiveToEconomicAsync(oldSeat, newSeat, availableTicketForNewSeat);
             }
             else if (oldSeat.Type == SeatType.Economic && newSeat.Type == SeatType.Executive)
             {
-                await UpgradeFromEconomicToExecutive(oldSeat, newSeat, availableTicketForNewSeat);
-                // se for econimco e quiser fazer upgrade vai para a pagina de checkout
+                await UpgradeFromEconomicToExecutiveAsync(oldSeat, newSeat, availableTicketForNewSeat);
             }
 
             await _ticketsPage.LoadFlightTicketsAsync(_ticketToChangeSeat.Flight);
@@ -134,7 +134,7 @@ namespace VitoriaAirlinesWPF.Windows
 
         }
 
-        private async Task<Ticket> GetAvailableTicketForSeat(Seat newSeat)
+        private async Task<Ticket> GetAvailableTicketForSeatAsync(Seat newSeat)
         {
             var response = await _flightService.GetTicketsForFlightAsync(_ticketToChangeSeat.FlightId);
             if (!response.IsSuccess || response.Result is not List<Ticket> allTicketsInFlight)
@@ -159,7 +159,7 @@ namespace VitoriaAirlinesWPF.Windows
             return availableTicket;
         }
 
-        private async Task UpgradeFromEconomicToExecutive(Seat oldSeat, Seat newSeat, Ticket newSeatTicket)
+        private async Task UpgradeFromEconomicToExecutiveAsync(Seat oldSeat, Seat newSeat, Ticket newSeatTicket)
         {
             var originalTicketPrice = newSeatTicket.Price;
 
@@ -175,7 +175,7 @@ namespace VitoriaAirlinesWPF.Windows
             if (result == true)
             {
                 newSeatTicket.PaymentMethod = ticketToPurchase.First().PaymentMethod;
-                await ChangeSeatsAsync(oldSeat, newSeat, newSeatTicket, true);
+                await ChangeSeatAsync(oldSeat, newSeat, newSeatTicket, true);
             }
             else
             {
@@ -192,7 +192,7 @@ namespace VitoriaAirlinesWPF.Windows
             newSeatTicket.Client = _ticketToChangeSeat.Client;
         }
 
-        private async Task ChangeSeatsAsync(Seat oldSeat, Seat newSeat, Ticket newSeatTicket, bool hasNewPaymentMethod = false)
+        private async Task<bool> ChangeSeatAsync(Seat oldSeat, Seat newSeat, Ticket newSeatTicket, bool hasNewPaymentMethod = false)
         {
             newSeatTicket.ClientId = _ticketToChangeSeat.ClientId;
 
@@ -210,7 +210,7 @@ namespace VitoriaAirlinesWPF.Windows
                 MessageBox.Show($"Error assigning new seat {newSeat.Name}: {updateNewTicketResponse.Message}." +
                     $" Your original seat {oldSeat.Name} remains assigned.",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                return false;
             }
 
 
@@ -220,26 +220,34 @@ namespace VitoriaAirlinesWPF.Windows
             {
                 MessageBox.Show($"Seat successfully changed from {oldSeat.Name}" +
                     $" to {newSeat.Name}.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                return true;
             }
             else
             {
                 MessageBox.Show($"New seat {newSeat.Name} was assigned, but an error occurred releasing your old seat {oldSeat.Name}:" +
                     $" {cancelOldTicketResponse.Message}. Please contact support to resolve this. Your booking is now for the new seat.",
                     "Partial Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return true;
 
             }
         }
 
-        private async Task DowngradeFromExecutiveToEconomic(Seat oldSeat, Seat newSeat, Ticket newSeatTicket)
+        private async Task DowngradeFromExecutiveToEconomicAsync(Seat oldSeat, Seat newSeat, Ticket newSeatTicket)
         {
-            await ChangeSeatsAsync(oldSeat, newSeat, newSeatTicket);
+            bool success = await ChangeSeatAsync(oldSeat, newSeat, newSeatTicket);
 
-            //TODO - NOTIFICAR PASSAGEIRO DO REEMBOLSO
+            newSeatTicket.Client = _ticketToChangeSeat.Client;
+            newSeatTicket.Flight = _ticketToChangeSeat.Flight;
+
+            if (success)
+            {
+                await _emailService.NotifyPassengersAboutRefundAsync(newSeatTicket.Client, newSeatTicket.Flight);
+            }
         }
 
-        private async Task ChangeSeatsWithinSameClass(Seat oldSeat, Seat newSeat, Ticket newSeatTicket)
+        private async Task ChangeSeatWithinSameClassAsync(Seat oldSeat, Seat newSeat, Ticket newSeatTicket)
         {
-            await ChangeSeatsAsync(oldSeat, newSeat, newSeatTicket);
+            await ChangeSeatAsync(oldSeat, newSeat, newSeatTicket);
         }
 
         private void btnMinimize_Click(object sender, RoutedEventArgs e)

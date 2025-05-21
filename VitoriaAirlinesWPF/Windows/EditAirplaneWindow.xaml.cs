@@ -148,7 +148,7 @@ namespace VitoriaAirlinesWPF.Windows
         private async Task HandleAirplaneNotFoundErrorAsync()
         {
             MessageBox.Show("This airplane model no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            await _airplanesPage.LoadAirplanes();
+            await _airplanesPage.LoadAirplanesAsync();
             this.Close();
         }
 
@@ -157,7 +157,7 @@ namespace VitoriaAirlinesWPF.Windows
             if (response.IsSuccess)
             {
                 MessageBox.Show("Airplane model updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await _airplanesPage.LoadAirplanes();
+                await _airplanesPage.LoadAirplanesAsync();
                 this.Close();
             }
             else

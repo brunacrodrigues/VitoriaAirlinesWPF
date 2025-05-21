@@ -90,7 +90,7 @@ namespace VitoriaAirlinesWPF.Windows
 				{
 					MessageBox.Show("Flight created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-					await _flightsPage.LoadFlights();
+					await _flightsPage.LoadFlightsAsync();
 
 					this.Close();
 				}
