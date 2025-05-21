@@ -59,7 +59,11 @@ namespace VitoriaAirlinesWPF.Pages
 
         private void btnChangeSeat_Click(object sender, RoutedEventArgs e)
         {
+            var selectedTicket = dataGridTickets.SelectedItem as Ticket;
+            selectedTicket.Flight = comboFlights.SelectedItem as Flight;
 
+            var changeSeatWindow = new ChangeSeatWindow(selectedTicket, this);
+            changeSeatWindow.ShowDialog();
         }
 
         private async void btnCancelTicket_Click(object sender, RoutedEventArgs e)
@@ -81,7 +85,7 @@ namespace VitoriaAirlinesWPF.Pages
                 if(confirmResult == MessageBoxResult.Yes)
                 {
 
-                    var response = await _ticketService.CancelTicket(selectedTicket.Id);
+                    var response = await _ticketService.CancelTicketAsync(selectedTicket.Id);
 
                     if(response.IsSuccess)
                     {

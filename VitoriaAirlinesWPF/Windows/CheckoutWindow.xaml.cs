@@ -91,6 +91,14 @@ namespace VitoriaAirlinesWPF.Windows
                     EnableUI();
                     return;
                 }
+
+                if (_sellTicketsWindow == null)
+                {
+                    TicketsToPurchase.First().PaymentMethod = paymentMethod;
+                    MessageBox.Show("Purchase completed successfully", "Success", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    this.DialogResult = true;
+                    return;
+                }
                 
                 await UpdateTicketAsync(paymentMethod);
                 FinalizePurchase();
@@ -171,6 +179,9 @@ namespace VitoriaAirlinesWPF.Windows
             {
                 await _sellTicketsWindow.TicketsPage.LoadFlightTicketsAsync(_flight); 
             }
+
+            this.DialogResult = true;
+
             Close();
         }
 
