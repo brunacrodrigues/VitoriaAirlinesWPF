@@ -50,17 +50,31 @@ namespace VitoriaAirlinesWPF.Pages
                 MessageBox.Show("Please select a flight.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            
-                var selectedFlight = comboFlights.SelectedItem as Flight;
-                SellTicketsWindow sellTicketsWindow = new SellTicketsWindow(selectedFlight, this);
-                sellTicketsWindow.ShowDialog(); 
+
+            var selectedFlight = comboFlights.SelectedItem as Flight;
+
+            if (selectedFlight.DepartureDateTime <= DateTime.Now)
+            {
+                MessageBox.Show("Can't sell tickets after a flight has departed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            SellTicketsWindow sellTicketsWindow = new SellTicketsWindow(selectedFlight, this);
+            sellTicketsWindow.ShowDialog(); 
             
         }
 
         private void btnChangeSeat_Click(object sender, RoutedEventArgs e)
         {
             var selectedTicket = dataGridTickets.SelectedItem as Ticket;
+
             selectedTicket.Flight = comboFlights.SelectedItem as Flight;
+
+            if (selectedTicket.Flight.DepartureDateTime <= DateTime.Now)
+            {
+                MessageBox.Show("Can't change seats after a flight has departed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             var changeSeatWindow = new ChangeSeatWindow(selectedTicket, this);
             changeSeatWindow.ShowDialog();
@@ -176,7 +190,8 @@ namespace VitoriaAirlinesWPF.Pages
                 var flightsResponse = await _flightService.GetAllAsync();
                 if (flightsResponse.IsSuccess && flightsResponse.Result is List<Flight> flights)
                 {
-                    comboFlights.ItemsSource = flights;
+                    comboFlights.ItemsSource = flights.Where(f => f.DepartureDateTime > DateTime.Now).
+                                                       OrderBy(f => f.DepartureDateTime).ToList();
                 }
                 else
                 {

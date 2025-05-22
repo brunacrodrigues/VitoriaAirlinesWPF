@@ -48,7 +48,7 @@ namespace VitoriaAirlinesWPF.Pages
                 return; 
             }
 
-            await DeleteAirplaneAsync(selectedAirplaneModel.Id);
+            await DeleteAirplaneAsync(selectedAirplaneModel);
 
 
         }
@@ -102,9 +102,9 @@ namespace VitoriaAirlinesWPF.Pages
 			return confirmResult == MessageBoxResult.Yes;
 		}
 
-		private async Task DeleteAirplaneAsync(int airplaneId)
+		private async Task DeleteAirplaneAsync(Airplane airplane)
 		{
-			var response = await _airplaneService.DeleteAsync(airplaneId);
+			var response = await _airplaneService.DeleteAsync(airplane.Id);
 
 			if (response.IsSuccess)
 			{
@@ -113,8 +113,26 @@ namespace VitoriaAirlinesWPF.Pages
 			}
 			else
 			{
-				MessageBox.Show($"Error deleting airplane model: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = MessageBox.Show($"{response.Message}, Would you like to set it as 'Inactive' instead?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    airplane.IsActive = false;
+
+                   var updateResponse = await _airplaneService.UpdateAsync(airplane);
+
+                    if (updateResponse.IsSuccess)
+                    {
+                        MessageBox.Show("Model set as inactive.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await LoadAirplanesAsync();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Failed to set as inactive: {updateResponse.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
 			}
+
 		}
 
         #endregion

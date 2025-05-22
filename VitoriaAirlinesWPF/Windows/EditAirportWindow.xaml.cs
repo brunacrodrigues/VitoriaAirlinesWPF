@@ -138,7 +138,7 @@ namespace VitoriaAirlinesWPF.Windows
             if (response.IsSuccess)
             {
                 MessageBox.Show("Airport updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await _airportsPage.LoadAirports();
+                await _airportsPage.LoadAirportsAsync();
                 this.Close();
             }
             else
@@ -158,7 +158,7 @@ namespace VitoriaAirlinesWPF.Windows
         private async Task HandleAirportNotFoundErrorAsync()
         {
             MessageBox.Show("This airport no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            await _airportsPage.LoadAirports();
+            await _airportsPage.LoadAirportsAsync();
             this.Close();
         }
 

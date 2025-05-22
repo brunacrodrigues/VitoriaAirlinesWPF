@@ -164,7 +164,7 @@ namespace VitoriaAirlinesWPF.Windows
         {
             _clientToEdit.FullName = txtFullName.Text;
             _clientToEdit.Passaport = txtPassport.Text;
-            _clientToEdit.Email = txtEmail.Text;
+            _clientToEdit.Email = txtEmail.Text.Replace(" ", "").Trim();
             _clientToEdit.Contact = txtContact.Text;
         }
 

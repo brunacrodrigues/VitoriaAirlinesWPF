@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
       xmlns:local="clr-namespace:VitoriaAirlinesWPF.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1200"
@@ -13,31 +14,56 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Título + botão -->
                 <RowDefinition Height="*"/>
-                <!-- Lista -->
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Linha 0: Título + Botão -->
+            <!-- Linha 0: Título + ComboBox + Botão -->
             <Grid Grid.Row="0" Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <!-- Para o título -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Para o botão -->
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Título -->
                 <Label Grid.Column="0"
-                       Content="Scheduled Flights"
+                       x:Name="lblFlights"
+                       Content="Flights"
                        FontSize="24"
                        FontFamily="{StaticResource OutfitBold}"
                        Foreground="White"
                        VerticalAlignment="Center" />
 
-                <Button Grid.Column="1" x:Name="btnScheduleFlight"
+                <Label Grid.Column="1" Content="Order by:"
+                       Foreground="White"
+                    Margin="10,0,0,0"
+                      VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                    FontFamily="{StaticResource OutfitRegular}">
+                </Label>
+
+                <!-- ComboBox filtro de origem -->
+                <Syncfusion:ComboBoxAdv x:Name="cmbOriginFilter"
+                          Grid.Column="2"
+                          Width="120"
+                          Height="30"
+                          Margin="10,0,0,0"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Right"
+                          FontFamily="{StaticResource OutfitRegular}"
+                          SelectionChanged="cmbOriginFilter_SelectionChanged"
+                          Foreground="Black"
+                          Background="White">
+                    <Syncfusion:ComboBoxItemAdv Content="Scheduled Flights" IsSelected="True"/>
+                    <Syncfusion:ComboBoxItemAdv Content="Past Flights"/>
+                </Syncfusion:ComboBoxAdv>
+
+                <!-- Botão -->
+                <Button Grid.Column="3" x:Name="btnScheduleFlight"
                        Width="150"
                        Height="35"
                        Margin="10,0,0,0"
@@ -54,14 +80,15 @@
                 </Button>
             </Grid>
 
+            <!-- DataGrid -->
             <DataGrid Style="{DynamicResource DataGridStyle1}" 
-          CellStyle="{DynamicResource DataGridCellStyle1}" 
-          ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
-          RowStyle="{DynamicResource DataGridRowStyle1}" 
-          Grid.Row="1" x:Name="flightsDataGrid">
+                      CellStyle="{DynamicResource DataGridCellStyle1}" 
+                      ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                      RowStyle="{DynamicResource DataGridRowStyle1}" 
+                      Grid.Row="1" x:Name="flightsDataGrid">
                 <DataGrid.Columns>
 
-                    <!-- ID Column -->
+                    <!-- ID -->
                     <DataGridTemplateColumn Header="ID" IsReadOnly="true" Width="auto" MinWidth="60">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -74,12 +101,10 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <!-- Flight Number Column -->
-                    <DataGridTextColumn Header="Flight No." IsReadOnly="True" Width="auto"
-                                        MinWidth="90"
-                                        Binding="{Binding FlightNumber}"/>
+                    <!-- Flight No. -->
+                    <DataGridTextColumn Header="Flight No." IsReadOnly="True" Width="auto" MinWidth="90" Binding="{Binding FlightNumber}"/>
 
-                    <!-- Airplane Model Column -->
+                    <!-- Airplane -->
                     <DataGridTextColumn Header="Airplane" Binding="{Binding Airplane.Model}" Width="auto" MinWidth="130" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -88,7 +113,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Origin Airport Column -->
+                    <!-- From -->
                     <DataGridTextColumn Header="From" Binding="{Binding Origin.IATA}" Width="auto" MinWidth="60" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -97,7 +122,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Destination Airport Column -->
+                    <!-- To -->
                     <DataGridTextColumn Header="To" Binding="{Binding Destination.IATA}" Width="auto" MinWidth="60" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -106,7 +131,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Departure Date Column -->
+                    <!-- Departure -->
                     <DataGridTextColumn Header="Departure Date" Binding="{Binding DepartureDateTime, StringFormat='dd/MM/yy HH:mm'}" Width="auto" MinWidth="150" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -115,7 +140,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Arrival Time Column (Change Binding with proprety) -->
+                    <!-- Arrival -->
                     <DataGridTextColumn Header="Arrival Time" Binding="{Binding ArrivalDateTime, StringFormat='dd/MM/yy HH:mm'}" Width="auto" MinWidth="150" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -124,7 +149,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Duration Column -->
+                    <!-- Duration -->
                     <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="auto" MinWidth="110" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -133,7 +158,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Executive Price (Binding - Show ticket price where ticket.Flight == this fligh) -->
+                    <!-- Executive -->
                     <DataGridTextColumn Header="Executive Price" Binding="{Binding ExecutiveTicketPrice, StringFormat=C, ConverterCulture='pt-PT'}" Width="auto" MinWidth="130" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -142,7 +167,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Executive Price (Binding - Show ticket price where ticket.Flight == this fligh) -->
+                    <!-- Economic -->
                     <DataGridTextColumn Header="Economic Price" Binding="{Binding EconomicTicketPrice, StringFormat=C, ConverterCulture='pt-PT'}" Width="auto" MinWidth="130" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -150,8 +175,8 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    
-                    <!-- Operations Column -->
+
+                    <!-- Operations -->
                     <DataGridTemplateColumn Header="Operations" IsReadOnly="true" Width="auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

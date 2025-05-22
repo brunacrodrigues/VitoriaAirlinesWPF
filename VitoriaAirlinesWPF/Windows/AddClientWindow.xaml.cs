@@ -58,7 +58,7 @@ namespace VitoriaAirlinesWPF.Windows
                 {
                     FullName = txtFullName.Text,
                     Passaport = txtPassport.Text,
-                    Email = txtEmail.Text,
+                    Email = txtEmail.Text.Replace(" ", "").Trim(),
                     Contact = txtContact.Text,
                 };
 

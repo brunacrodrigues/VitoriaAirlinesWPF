@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Syncfusion.Windows.Tools.Controls;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using VitoriaAirlinesLibrary.Models;
@@ -14,6 +15,7 @@ namespace VitoriaAirlinesWPF.Pages
 	{
 		FlightService _flightService;
 		EmailService _emailService;
+		List<Flight> _allFlights;
 
 		public FlightsPage()
 		{
@@ -21,12 +23,20 @@ namespace VitoriaAirlinesWPF.Pages
 			_flightService = new FlightService();
 			_emailService = new EmailService();
 			Loaded += Page_Loaded;
-		}
+
+        }
 
 		private void btnSellTickets_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
-			SellTicketsWindow sellTicketsWindow = new SellTicketsWindow(selectedFlight);
+
+            if (selectedFlight.DepartureDateTime <= DateTime.Now)
+            {
+                MessageBox.Show("Can't sell tickets after a flight has departed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            SellTicketsWindow sellTicketsWindow = new SellTicketsWindow(selectedFlight);
 			sellTicketsWindow.ShowDialog();
         }
 
@@ -34,6 +44,7 @@ namespace VitoriaAirlinesWPF.Pages
 		{
 			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
 
+			
 			if (!ConfirmDeletion(selectedFlight.FlightNumber))
 			{
 				return;
@@ -53,7 +64,13 @@ namespace VitoriaAirlinesWPF.Pages
 		private void btnEditFlight_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
-			EditFlightWindow editFlightWindow = new EditFlightWindow(this, selectedFlight);
+
+            if (selectedFlight.DepartureDateTime <= DateTime.Now)
+            {
+                MessageBox.Show("The flight can't be updated after it has departed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            EditFlightWindow editFlightWindow = new EditFlightWindow(this, selectedFlight);
 			editFlightWindow.ShowDialog();
 		}
 
@@ -85,7 +102,7 @@ namespace VitoriaAirlinesWPF.Pages
                         }
 						else
 						{
-                            MessageBox.Show($"Error loading fligh tockets: {(ticketsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show($"Error loading fligh tickets: {(ticketsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
 							return;
                         }
                         
@@ -93,8 +110,11 @@ namespace VitoriaAirlinesWPF.Pages
 
                     await Task.WhenAll(tasks);
 
-                    flightsDataGrid.ItemsSource = flights;
-				}
+                    _allFlights = flights;
+
+					cmbOriginFilter.SelectedIndex = 0;
+
+                }
 				else
 				{
 					MessageBox.Show($"Error loading flights: {(flightsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -173,5 +193,27 @@ namespace VitoriaAirlinesWPF.Pages
 
 			return confirmResult == MessageBoxResult.Yes;
 		}
-	}
+
+        private void cmbOriginFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_allFlights == null) return;
+
+			var selectedItem = cmbOriginFilter.SelectedIndex;
+
+			if (selectedItem == 0)
+			{
+                lblFlights.Content = "Scheduled Flights";
+                flightsDataGrid.ItemsSource = _allFlights.Where(f => f.DepartureDateTime > DateTime.Now)
+					.OrderBy(f => f.DepartureDateTime);
+
+            }
+			else
+			{
+                lblFlights.Content = "Past Flights";
+                flightsDataGrid.ItemsSource = _allFlights.Where(f => f.DepartureDateTime <= DateTime.Now)
+                    .OrderByDescending(f => f.DepartureDateTime);
+				
+            }
+        }
+    }
 }

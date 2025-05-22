@@ -13,10 +13,13 @@ namespace VitoriaAirlinesWPF.Pages
     public partial class AirportsPage : Page
     {
         AirportService _airportService;
+        FlightService _flightService;
+        List<Flight> Flights = new List<Flight>();
         public AirportsPage()
         {
             InitializeComponent();
             _airportService = new AirportService();
+            _flightService = new FlightService();
             Loaded += Page_Loaded;
         }
 
@@ -44,19 +47,39 @@ namespace VitoriaAirlinesWPF.Pages
         {
             var selectedAirport = airportsDataGrid.SelectedItem as Airport;
 
+
+            bool isUsed = Flights.Any(f => f.OriginAirportId == selectedAirport.Id ||
+            f.DestinationAirportId == selectedAirport.Id);
+
+            if (isUsed)
+            {
+                MessageBox.Show($"The Airport '{selectedAirport.Name}' cannot be updated because it has been used in flights.");
+            }
+
             var editAirportWindow = new EditAirportWindow(this, selectedAirport);
             editAirportWindow.ShowDialog();
 
         }
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadAirports();
+            await LoadAirportsAsync();
+            await LoadFlightsAsync();
         }
 
         #endregion
 
         #region Methods
-        public async Task LoadAirports()
+
+        public async Task LoadFlightsAsync()
+        {
+            var response = await _flightService.GetAllAsync();
+
+            if (response.IsSuccess)
+            {
+                Flights = response.Result as List<Flight>;
+            }
+        }
+        public async Task LoadAirportsAsync()
         {
             List<Airport> Airports = new List<Airport>();
 
@@ -100,7 +123,7 @@ namespace VitoriaAirlinesWPF.Pages
 			if (response.IsSuccess)
 			{
 				MessageBox.Show("Airport deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-				await LoadAirports();
+				await LoadAirportsAsync();
 			}
 			else
 			{
