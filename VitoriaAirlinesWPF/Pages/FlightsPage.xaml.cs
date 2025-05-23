@@ -128,26 +128,40 @@ namespace VitoriaAirlinesWPF.Pages
 
         private async Task DeleteFlightAsync(Flight selectedFlight)
         {
+            List<Client> flightPassengers = null;
             var clientsResponse = await _flightService.GetClientsForFlightAsync(selectedFlight.Id);
 
-            if (!clientsResponse.IsSuccess || clientsResponse.Result is not List<Client> flightPassengers)
+            if (!clientsResponse.IsSuccess || clientsResponse.Result is not List<Client> passengersWithTickets)
             {
-                MessageBox.Show($"Error getting flight passengers: {clientsResponse.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+                MessageBox.Show($"Could not get passengers for flight {selectedFlight.Id}.\n" +    
+                                $"Error: {clientsResponse.Message}\n" +
+                               "If you continue, passengers won't be notified.","Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
 
-            await NotifyPassengersAsync(flightPassengers, selectedFlight);
+                flightPassengers = new List<Client>();
+            }
+            else
+            {
+                flightPassengers = passengersWithTickets;
+            }
 
             var flightResponse = await _flightService.DeleteAsync(selectedFlight.Id);
 
             if (flightResponse.IsSuccess)
             {
-                MessageBox.Show("Flight deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (flightPassengers != null && flightPassengers.Any())
+                {
+                    await NotifyPassengersAsync(flightPassengers, selectedFlight);
+                    MessageBox.Show("Flight deleted successfully and passengers have been notified.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Flight deleted successfully. No passengers were found.", "Success (No Passengers Notified)", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
                 await LoadFlightsAsync();
             }
             else
             {
-                MessageBox.Show($"Error deleting flight: {flightResponse.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error deleting flight: {flightResponse.Message}", "Deletion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
