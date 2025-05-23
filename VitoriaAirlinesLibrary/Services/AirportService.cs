@@ -1,4 +1,5 @@
-﻿using VitoriaAirlinesLibrary.Models;
+﻿using VitoriaAirlinesLibrary.Helpers;
+using VitoriaAirlinesLibrary.Models;
 
 namespace VitoriaAirlinesLibrary.Services
 {
@@ -37,19 +38,19 @@ namespace VitoriaAirlinesLibrary.Services
             return _apiService.DeleteAsync($"{Controller}/{id}");
         }
 
-		public async Task<bool> ExistsAsync(int id)
-		{
-			try
-			{
-				var response = await _apiService.GetAsync<Airport>($"{Controller}/{id}");
+        public async Task<bool> ExistsAsync(int id)
+        {
+            try
+            {
+                var response = await _apiService.GetAsync<Airport>($"{Controller}/{id}");
 
 
-				return response.IsSuccess;
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-		}
-	}
+                return response.IsSuccess;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+    }
 }

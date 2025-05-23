@@ -1,13 +1,5 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using VitoriaAirlinesWPF.Pages;
 
 namespace VitoriaAirlinesWPF
@@ -24,7 +16,7 @@ namespace VitoriaAirlinesWPF
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-
+            frameContainer.Navigate(new SearchFlightsPage());
         }
 
         private void btnFlights_Click(object sender, RoutedEventArgs e)
@@ -63,7 +55,7 @@ namespace VitoriaAirlinesWPF
             if (WindowState == WindowState.Maximized)
             {
                 WindowState = WindowState.Normal;
-                
+
                 btnIcon.Source = new BitmapImage(new Uri("/Resources/Icons/restore.png", UriKind.Relative));
             }
             else
@@ -78,5 +70,11 @@ namespace VitoriaAirlinesWPF
         {
             WindowState = WindowState.Minimized;
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            frameContainer.Navigate(new SearchFlightsPage());
+        }
+
     }
 }

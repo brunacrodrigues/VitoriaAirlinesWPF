@@ -1,38 +1,36 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using VitoriaAirlinesLibrary.Models;
+using VitoriaAirlinesLibrary.Helpers;
 
 
 namespace VitoriaAirlinesLibrary.Services
 {
     public class ApiService
     {
-        private readonly HttpClient _client;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
-        private readonly JsonSerializerOptions _jsonSerializerOptionsDeserialize;
+        private static readonly HttpClient _client = new HttpClient
+        {
+            BaseAddress = new Uri("https://localhost:44331/api/")
+        };
+
+        private readonly JsonSerializerOptions _options;
+        private readonly JsonSerializerOptions _serializeOptions;
 
         public ApiService()
         {
-            _client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44331/api/")
-            };
-
-            _jsonSerializerOptions = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                PropertyNameCaseInsensitive = true
-            };
-
-            _jsonSerializerOptionsDeserialize = new JsonSerializerOptions
+            _options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+            _options.Converters.Add(new JsonStringEnumConverter());
 
-			_jsonSerializerOptionsDeserialize.Converters.Add(new JsonStringEnumConverter());
+            
+            _serializeOptions = new JsonSerializerOptions(_options)
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
 
-		}
+        }
 
         public async Task<Response> GetAsync<T>(string controller)
         {
@@ -50,7 +48,7 @@ namespace VitoriaAirlinesLibrary.Services
                     };
                 }
 
-                var result = JsonSerializer.Deserialize<T>(content, _jsonSerializerOptionsDeserialize);
+                var result = JsonSerializer.Deserialize<T>(content, _options);
 
                 return new Response
                 {
@@ -72,7 +70,7 @@ namespace VitoriaAirlinesLibrary.Services
         {
             try
             {
-                var response = await _client.PostAsJsonAsync(controller, data, _jsonSerializerOptions);
+                var response = await _client.PostAsJsonAsync(controller, data, _serializeOptions);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -103,7 +101,7 @@ namespace VitoriaAirlinesLibrary.Services
         {
             try
             {
-                var response = await _client.PutAsJsonAsync(controller, data, _jsonSerializerOptions);
+                var response = await _client.PutAsJsonAsync(controller, data, _serializeOptions);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -162,5 +160,4 @@ namespace VitoriaAirlinesLibrary.Services
         }
     }
 }
-
 

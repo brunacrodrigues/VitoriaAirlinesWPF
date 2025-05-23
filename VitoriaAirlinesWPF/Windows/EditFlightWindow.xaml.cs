@@ -1,16 +1,17 @@
 ﻿using Syncfusion.UI.Xaml.Grid;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using VitoriaAirlinesLibrary.Helpers;
 using VitoriaAirlinesLibrary.Models;
 using VitoriaAirlinesLibrary.Services;
 using VitoriaAirlinesWPF.Pages;
 
 namespace VitoriaAirlinesWPF.Windows
 {
-	/// <summary>
-	/// Interaction logic for EditFlightWindow.xaml
-	/// </summary>
-	public partial class EditFlightWindow : Window
+    /// <summary>
+    /// Interaction logic for EditFlightWindow.xaml
+    /// </summary>
+    public partial class EditFlightWindow : Window
 	{
 		FlightsPage _flightsPage;
 		Flight _flightToEdit;

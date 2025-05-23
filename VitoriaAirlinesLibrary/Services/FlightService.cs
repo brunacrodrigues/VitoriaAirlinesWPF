@@ -1,4 +1,5 @@
-﻿using VitoriaAirlinesLibrary.Models;
+﻿using VitoriaAirlinesLibrary.Helpers;
+using VitoriaAirlinesLibrary.Models;
 
 namespace VitoriaAirlinesLibrary.Services
 {
@@ -31,7 +32,7 @@ namespace VitoriaAirlinesLibrary.Services
                     await LoadAirplaneAsync(flight);
                     await LoadOriginAsync(flight);
                     await LoadDestinationAsync(flight);
-                });
+                }).ToList();
 
                 await Task.WhenAll(loadTasks);
 
@@ -165,6 +166,11 @@ namespace VitoriaAirlinesLibrary.Services
                     Message = $"Unexpected error: {ex.Message}"
                 };
             }
+        }
+
+        public Task <Response> GetFlightsAndTicketsAsync()
+        {
+            return _apiService.GetAsync<List<Flight>>($"{Controller}/tickets");
         }
 
     }

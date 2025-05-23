@@ -55,7 +55,11 @@ namespace VitoriaAirlinesLibrary.Models
 			}
 		}
 
-		[JsonIgnore]
+        [JsonIgnore]
+        public decimal? DisplayPrice { get; set; }
+
+
+        [JsonIgnore]
         public Airport Origin { get; set; }
 
         [JsonIgnore]

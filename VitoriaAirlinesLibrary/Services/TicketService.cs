@@ -1,4 +1,5 @@
-﻿using VitoriaAirlinesLibrary.Models;
+﻿using VitoriaAirlinesLibrary.Helpers;
+using VitoriaAirlinesLibrary.Models;
 
 namespace VitoriaAirlinesLibrary.Services
 {

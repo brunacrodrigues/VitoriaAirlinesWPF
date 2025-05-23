@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using VitoriaAirlinesLibrary.Models;
+using VitoriaAirlinesLibrary.Helpers;
 
 namespace VitoriaAirlinesLibrary.Services
 {

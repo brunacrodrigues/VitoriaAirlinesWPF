@@ -1,34 +1,32 @@
-﻿using Syncfusion.Windows.Tools.Controls;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Media3D;
 using VitoriaAirlinesLibrary.Models;
 using VitoriaAirlinesLibrary.Services;
 using VitoriaAirlinesWPF.Windows;
 
 namespace VitoriaAirlinesWPF.Pages
 {
-	/// <summary>
-	/// Interaction logic for Flights.xaml
-	/// </summary>
-	public partial class FlightsPage : Page
-	{
-		FlightService _flightService;
-		EmailService _emailService;
-		List<Flight> _allFlights;
+    /// <summary>
+    /// Interaction logic for Flights.xaml
+    /// </summary>
+    public partial class FlightsPage : Page
+    {
+        FlightService _flightService;
+        EmailService _emailService;
+        List<Flight> _allFlights;
 
-		public FlightsPage()
-		{
-			InitializeComponent();
-			_flightService = new FlightService();
-			_emailService = new EmailService();
-			Loaded += Page_Loaded;
+        public FlightsPage()
+        {
+            InitializeComponent();
+            _flightService = new FlightService();
+            _emailService = new EmailService();
+            Loaded += Page_Loaded;
 
         }
 
-		private void btnSellTickets_Click(object sender, RoutedEventArgs e)
-		{
-			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
+        private void btnSellTickets_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedFlight = flightsDataGrid.SelectedItem as Flight;
 
             if (selectedFlight.DepartureDateTime <= DateTime.Now)
             {
@@ -37,33 +35,33 @@ namespace VitoriaAirlinesWPF.Pages
             }
 
             SellTicketsWindow sellTicketsWindow = new SellTicketsWindow(selectedFlight);
-			sellTicketsWindow.ShowDialog();
+            sellTicketsWindow.ShowDialog();
         }
 
-		private async void btnDeleteFlight_Click(object sender, RoutedEventArgs e)
-		{
-			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
+        private async void btnDeleteFlight_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedFlight = flightsDataGrid.SelectedItem as Flight;
 
-			
-			if (!ConfirmDeletion(selectedFlight.FlightNumber))
-			{
-				return;
-			}
 
-			if (!await FlightExistsAsync(selectedFlight.Id))
-			{
-				await LoadFlightsAsync();
-				return;
-			}
+            if (!ConfirmDeletion(selectedFlight.FlightNumber))
+            {
+                return;
+            }
 
-			await DeleteFlightAsync(selectedFlight);
-		}
+            if (!await FlightExistsAsync(selectedFlight.Id))
+            {
+                await LoadFlightsAsync();
+                return;
+            }
 
-		
+            await DeleteFlightAsync(selectedFlight);
+        }
 
-		private void btnEditFlight_Click(object sender, RoutedEventArgs e)
-		{
-			var selectedFlight = flightsDataGrid.SelectedItem as Flight;
+
+
+        private void btnEditFlight_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedFlight = flightsDataGrid.SelectedItem as Flight;
 
             if (selectedFlight.DepartureDateTime <= DateTime.Now)
             {
@@ -71,62 +69,62 @@ namespace VitoriaAirlinesWPF.Pages
                 return;
             }
             EditFlightWindow editFlightWindow = new EditFlightWindow(this, selectedFlight);
-			editFlightWindow.ShowDialog();
-		}
+            editFlightWindow.ShowDialog();
+        }
 
-		private async void Page_Loaded(object sender, RoutedEventArgs e)
-		{
-			await LoadFlightsAsync();
-		}
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            await LoadFlightsAsync();
+        }
 
-		private void btnScheduleFlight_Click(object sender, RoutedEventArgs e)
-		{
-			var addFlightWindow = new AddFlightWindow(this);
-			addFlightWindow.ShowDialog();
-		}
+        private void btnScheduleFlight_Click(object sender, RoutedEventArgs e)
+        {
+            var addFlightWindow = new AddFlightWindow(this);
+            addFlightWindow.ShowDialog();
+        }
 
-		public async Task LoadFlightsAsync()
-		{
-			try
-			{
-				var flightsResponse = await _flightService.GetAllAsync();
-				if (flightsResponse.IsSuccess && flightsResponse.Result is List<Flight> flights)
-				{
+        public async Task LoadFlightsAsync()
+        {
+            try
+            {
+                var flightsResponse = await _flightService.GetAllAsync();
+                if (flightsResponse.IsSuccess && flightsResponse.Result is List<Flight> flights)
+                {
                     var tasks = flights.Select(async flight =>
                     {
                         var ticketsResponse = await _flightService.GetTicketsForFlightAsync(flight.Id);
 
-						if (ticketsResponse.IsSuccess && ticketsResponse.Result is List<Ticket> tickets)
-						{
+                        if (ticketsResponse.IsSuccess && ticketsResponse.Result is List<Ticket> tickets)
+                        {
                             flight.Tickets = tickets;
                         }
-						else
-						{
+                        else
+                        {
                             MessageBox.Show($"Error loading fligh tickets: {(ticketsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
-							return;
+                            return;
                         }
-                        
+
                     });
 
                     await Task.WhenAll(tasks);
 
                     _allFlights = flights;
 
-					cmbOriginFilter.SelectedIndex = 0;
+                    cmbOriginFilter.SelectedIndex = 0;
 
                 }
-				else
-				{
-					MessageBox.Show($"Error loading flights: {(flightsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
-					flightsDataGrid.ItemsSource = null; 
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				flightsDataGrid.ItemsSource = null;
-			}
-		}
+                else
+                {
+                    MessageBox.Show($"Error loading flights: {(flightsResponse.Message ?? "Unknown error")}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    flightsDataGrid.ItemsSource = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                flightsDataGrid.ItemsSource = null;
+            }
+        }
 
         private async Task DeleteFlightAsync(Flight selectedFlight)
         {
@@ -172,47 +170,47 @@ namespace VitoriaAirlinesWPF.Pages
 
 
         private async Task<bool> FlightExistsAsync(int flightId)
-		{
-			var flightExists = await _flightService.ExistsAsync(flightId);
+        {
+            var flightExists = await _flightService.ExistsAsync(flightId);
 
-			if (!flightExists)
-			{
-				MessageBox.Show("The selected flight no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-				return false;
-			}
+            if (!flightExists)
+            {
+                MessageBox.Show("The selected flight no longer exists in the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		private bool ConfirmDeletion(string flightNumber)
-		{
-			var confirmResult = MessageBox.Show($"Are you sure you want to delete the flight '{flightNumber}'?",
-												"Confirm Delete",
-												MessageBoxButton.YesNo,
-												MessageBoxImage.Question);
+        private bool ConfirmDeletion(string flightNumber)
+        {
+            var confirmResult = MessageBox.Show($"Are you sure you want to delete the flight '{flightNumber}'?",
+                                                "Confirm Delete",
+                                                MessageBoxButton.YesNo,
+                                                MessageBoxImage.Question);
 
-			return confirmResult == MessageBoxResult.Yes;
-		}
+            return confirmResult == MessageBoxResult.Yes;
+        }
 
         private void cmbOriginFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_allFlights == null) return;
 
-			var selectedItem = cmbOriginFilter.SelectedIndex;
+            var selectedItem = cmbOriginFilter.SelectedIndex;
 
-			if (selectedItem == 0)
-			{
+            if (selectedItem == 0)
+            {
                 lblFlights.Content = "Scheduled Flights";
                 flightsDataGrid.ItemsSource = _allFlights.Where(f => f.DepartureDateTime > DateTime.Now)
-					.OrderBy(f => f.DepartureDateTime);
+                    .OrderBy(f => f.DepartureDateTime);
 
             }
-			else
-			{
+            else
+            {
                 lblFlights.Content = "Past Flights";
                 flightsDataGrid.ItemsSource = _allFlights.Where(f => f.DepartureDateTime <= DateTime.Now)
                     .OrderByDescending(f => f.DepartureDateTime);
-				
+
             }
         }
     }

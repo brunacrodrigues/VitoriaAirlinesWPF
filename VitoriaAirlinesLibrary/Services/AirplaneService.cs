@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using VitoriaAirlinesLibrary.Helpers;
 using VitoriaAirlinesLibrary.Models;
 
 namespace VitoriaAirlinesLibrary.Services

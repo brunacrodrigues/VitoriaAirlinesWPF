@@ -1,4 +1,4 @@
-﻿namespace VitoriaAirlinesLibrary.Models
+﻿namespace VitoriaAirlinesLibrary.Helpers
 {
     public class Response
     {

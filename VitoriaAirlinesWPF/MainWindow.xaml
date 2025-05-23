@@ -9,7 +9,8 @@
         WindowStartupLocation="CenterScreen" WindowStyle="None"
         Background="Transparent" AllowsTransparency="True"
         ResizeMode="NoResize"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        Loaded="Window_Loaded">
 
     <Border Background="White" CornerRadius="8">
         <Grid>
@@ -175,7 +176,7 @@
             </Border>
 
             <!-- Content -->
-            <Grid Grid.Column="1" Background="LightYellow">
+            <Grid Grid.Column="1" Background="#FFFDF5E6">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
                     <RowDefinition Height="*"/>
@@ -236,7 +237,8 @@
                 <Frame Grid.Row="1"
                        Name ="frameContainer"
                        Margin="20"
-                       Background="white">   
+                       Background="white"
+                       NavigationUIVisibility="Hidden">   
                     
                 </Frame>             
 

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Media.Imaging;
+using VitoriaAirlinesLibrary.Helpers;
 using VitoriaAirlinesLibrary.Models;
 using VitoriaAirlinesLibrary.Services;
 using VitoriaAirlinesWPF.Pages;
