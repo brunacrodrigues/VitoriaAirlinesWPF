@@ -62,10 +62,14 @@ namespace VitoriaAirlinesWPF.Windows
                     Contact = txtContact.Text,
                 };
 
+                creatingClientOverlay.Visibility = Visibility.Visible;
+
                 var response = await _clientService.CreateAsync(newClient);
 
                 if (response.IsSuccess)
                 {
+                    creatingClientOverlay.Visibility = Visibility.Visible;
+
                     MessageBox.Show("Client added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     await _clientsPage.LoadClients();
                     this.Close();

@@ -3,15 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VitoriaAirlinesWPF.Windows" 
-        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf" 
+        xmlns:local="clr-namespace:VitoriaAirlinesWPF.Windows"
+        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
-        Title="Change Seat" Height="Auto" Width="700" SizeToContent="Height"
+        Title="Change Seat" Height="480" Width="750" SizeToContent="Height"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
-
-
-
 
     <Border CornerRadius="8" Background="#FFFDF5E6" BorderBrush="#FF530411" BorderThickness="3">
         <Grid>
@@ -21,7 +18,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Botões de Controlo da Janela -->
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,10,0" Height="30" Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button x:Name="btnClose" Width="25" Height="25" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Tag="IsCloseButton" Click="btnClose_Click">
                     <Button.Template>
@@ -45,35 +41,20 @@
                 </Button>
             </StackPanel>
 
-
             <Border Grid.Row="1" Background="#FF530411" CornerRadius="5,5,0,0" Margin="10,0,10,0">
                 <Label Content="Change Seat" FontSize="24" FontFamily="{StaticResource OutfitBold}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10"/>
             </Border>
-            
-            <Border Grid.Row="2" Background="Black" CornerRadius="0,0,5,5" Padding="20" Margin="10,0,10,10">
+
+            <Border x:Name="formContainerBorder" Grid.Row="2" Background="Black" CornerRadius="0,0,5,5" Padding="20" Margin="10,0,10,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1.2*" MinWidth="280"/>
                         <ColumnDefinition Width="1.5*" MinWidth="380"/>
-                        <ColumnDefinition Width="1.6*" MinWidth="400"/>
+                        
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-
-                        
-                        <Grid Margin="0,5,0,0">
-                            
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="140"/>
-                              
-                                <ColumnDefinition Width="*"/>
-                                
-                            </Grid.ColumnDefinitions>
-                        </Grid>
-
-                        <!-- Tipo de Lugar -->
                         <Grid Margin="0,10,0,10">
-                            <!-- Margem superior para separar -->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="110"/>
                                 <ColumnDefinition Width="*"/>
@@ -85,66 +66,62 @@
                                                     SelectionChanged="comboBoxSeatType_SelectionChanged"
                                                     Foreground="Black"/>
                         </Grid>
+                        <TextBlock Text="Select New Seat:" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" Margin="0,10,0,5"/>
 
-                        <!-- Selecionar Lugares -->
-                        <TextBlock Text="Select Seat:" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" Margin="0,10,0,5"/>
-                        <ListBox x:Name="listBoxAvailableSeats" Style="{StaticResource StyledListBox}" MinHeight="220" MaxHeight="280" SelectionMode="Single">
-                        </ListBox>
 
-                        <StackPanel x:Name="panelSeatLoading" Visibility="Collapsed" Margin="0,8,0,0">
-                            <TextBlock Text="Loading available seats..." 
-                                       Foreground="White" 
-                                       FontSize="14" 
-                                       FontFamily="{StaticResource OutfitSemiBold}" 
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,5"/>
-                            <ProgressBar x:Name="progressBarSeatLoading"
-                                         Height="20"
-                                         IsIndeterminate="True"
-                                         Foreground="#D1860E"
-                                         Background="#FF530411"/>
-                        </StackPanel>
+                        <Grid MinHeight="220" MaxHeight="300">
+                            <ListBox x:Name="listBoxAvailableSeats" Style="{StaticResource StyledListBox}" SelectionMode="Single"/>
+
+                            <Border x:Name="panelSeatLoadingOverlay" Background="#AA000000" Visibility="Collapsed" Panel.ZIndex="5"
+                                    CornerRadius="3">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Grid Height="Auto" Width="200">
+                                        <ProgressBar x:Name="progressBarSeatLoading" Height="20" IsIndeterminate="True" Foreground="#D1860E" Background="#FF530411" BorderThickness="0"/>
+                                        <TextBlock Text="Loading available seats..." Foreground="White" FontSize="14" FontFamily="{StaticResource OutfitMedium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </StackPanel>
 
-                    <!-- Coluna Central: Cliente, Dados Passageiro -->
-                    <StackPanel Grid.Column="1" Margin="15,0,15,0">
-                        <Grid Margin="0,5,0,2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="140"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                           
-                        </Grid>
-                        
 
+                    <StackPanel Grid.Column="1" Margin="15,0,0,0">
                         <Border BorderBrush="#FF530411" BorderThickness="2" CornerRadius="5" Padding="15" Margin="0,10,0,0" Background="#FF1A1A1A">
-                            <StackPanel>
+                            <StackPanel x:Name="formPanel">
                                 <TextBlock Text="Passenger Details" Foreground="White" FontFamily="{StaticResource OutfitBold}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,15"/>
                                 <TextBlock Text="Full Name" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
                                 <TextBox x:Name="txtFullName" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10" IsReadOnly="True"/>
                                 <TextBlock Text="Passport" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
                                 <TextBox x:Name="txtPassport" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10" IsReadOnly="True"/>
-                                <TextBlock Text="Email" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtEmail" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10" IsReadOnly="True"/>
-                                <TextBlock Text="Contact" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtContact" Style="{StaticResource StyledTextBox}" Margin="0,0,0,15" IsReadOnly="True"/>
-                                <TextBlock Text="Seat" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtSeat" Style="{StaticResource StyledTextBox}" Margin="0,0,0,15" IsReadOnly="True"/>
+                                
+                                <TextBlock Text="Current Seat" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
+                                <TextBox x:Name="txtCurrentSeat" Style="{StaticResource StyledTextBox}" Margin="0,0,0,15" IsReadOnly="True"/>
                                 <Button x:Name="btnConfirmChange" 
                                         Style="{StaticResource ActionButtonGold}" 
-                                        Click="btnConfirmChange_Click">
+                                        Click="btnConfirmChange_Click" Height="40">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="➕" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                        <TextBlock Text="Confirm Change" VerticalAlignment="Center"/>
+                                        <TextBlock Text="&#xE930;" FontWeight="Bold" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        
+                                        <TextBlock Text="Confirm Seat Change" VerticalAlignment="Center" FontSize="15"/>
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
                         </Border>
                     </StackPanel>
-
                 </Grid>
             </Border>
+
+            <Grid x:Name="confirmingChangeOverlay"
+                  Grid.Row="2"
+                Background="#AA000000" Visibility="Collapsed" Panel.ZIndex="10"
+                  Margin="10,0,10,10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid Height="Auto" Width="250">
+                        <ProgressBar Height="20" IsIndeterminate="True" Foreground="#FF530411" Background="#FF333333" BorderThickness="0"/>
+                        <TextBlock Text="Confirming seat change..." Foreground="White" FontSize="14" FontFamily="{StaticResource OutfitMedium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

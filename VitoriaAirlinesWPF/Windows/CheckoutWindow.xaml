@@ -10,19 +10,14 @@
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
 
-   
     <Border CornerRadius="8" Background="#FFFDF5E6" BorderBrush="#FF530411" BorderThickness="3">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Window Control Buttons -->
                 <RowDefinition Height="Auto"/>
-                <!-- Title -->
                 <RowDefinition Height="*"/>
-                <!-- Content -->
             </Grid.RowDefinitions>
 
-            <!-- Botões de Controlo da Janela -->
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,10,0" Height="30" Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button x:Name="btnClose" Width="25" Height="25" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Tag="IsCloseButton" Click="btnClose_Click">
                     <Button.Template>
@@ -45,33 +40,27 @@
                     <Image Source="/Resources/Icons/minimize.png" Width="15" Height="15"/>
                 </Button>
             </StackPanel>
-            <!-- Title Bar -->
+
             <Border Grid.Row="1" Background="#FF530411" CornerRadius="5,5,0,0" Margin="10,0,10,0">
                 <Label Content="Checkout" FontSize="24" FontFamily="{StaticResource OutfitBold}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10"/>
             </Border>
 
-            <!-- Main Content Area -->
-            <Border Grid.Row="2" Background="Black" CornerRadius="0,0,5,5" Padding="20" Margin="10,0,10,10">
+            <Border x:Name="mainContentBorder" Grid.Row="2" Background="Black" CornerRadius="0,0,5,5" Padding="20" Margin="10,0,10,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1.5*"/>
-                        <!-- Resumo da Compra (ListBox) -->
                         <ColumnDefinition Width="*"/>
-                        <!-- Método de Pagamento -->
                     </Grid.ColumnDefinitions>
 
                     <Border BorderBrush="#FF530411" BorderThickness="3" Margin="0,0,10,0">
                         <StackPanel Grid.Column="0">
-                            <!-- O StackPanel pode estar a restringir a largura do DataGrid -->
                             <DataGrid Grid.Row="1" x:Name="dataGridCart" 
                                         Style="{StaticResource DataGridStyle1}" 
                                         CellStyle="{StaticResource DataGridCellStyle1}"
                                         ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
                                         RowStyle="{StaticResource DataGridRowStyle1}"
-                                        HorizontalAlignment="Stretch">
-                                
+                                        HorizontalAlignment="Stretch" MaxHeight="250">
                                 <DataGrid.Columns>
-                                    <!-- A coluna "Seat" já tem Width="*" -->
                                     <DataGridTextColumn Header="Passenger" Binding="{Binding Client.FullName}" Width="Auto" MinWidth="60" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="Seat" Binding="{Binding Seat.Name}" Width="Auto" MinWidth="60" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="Type" Binding="{Binding Seat.Type}" Width="Auto" MinWidth="60" IsReadOnly="True"/>
@@ -89,25 +78,21 @@
                                             </Style>
                                         </DataGridTextColumn.HeaderStyle>
                                     </DataGridTextColumn>
-                                   
                                 </DataGrid.Columns>
                             </DataGrid>
-
                             <TextBlock x:Name="txtTotalAmount"
-                   Text="Total: €0.00"    
-                   FontSize="16"
-                   FontWeight="Bold"
-                   Foreground="White" 
-                   HorizontalAlignment="Right" 
-                   Margin="0,200,10,10"
-                                       FontFamily="{StaticResource OutfitSemiBold}"/> 
+                                       Text="Total: €0.00"    
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="White" 
+                                       HorizontalAlignment="Right" 
+                                       Margin="0,200,10,10" 
+                                       FontFamily="{StaticResource OutfitSemiBold}"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Coluna Direita: Método de Pagamento -->
-                    <StackPanel Grid.Column="1">
-                        <!-- Método de Pagamento ComboBox -->
-                        <Grid Margin="0,30,0,15">
+                    <StackPanel x:Name="paymentPanel" Grid.Column="1" Margin="10,0,0,0">
+                        <Grid Margin="0,0,0,15">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="130"/>
                                 <ColumnDefinition Width="*"/>
@@ -118,59 +103,61 @@
                             <Syncfusion:ComboBoxAdv Grid.Column="1"
                                                     x:Name="comboPaymentMethod"
                                                     Style="{StaticResource StyledComboBox}"
-                                                    Margin="10,0,0,0"
-                                                    SelectionChanged="comboPaymentMethod_SelectionChanged">
-                               
-                                <!-- Adicionar outros métodos se necessário -->
-                            </Syncfusion:ComboBoxAdv>
+                                                    Margin="10,0,0,0" Height="35"
+                                                    SelectionChanged="comboPaymentMethod_SelectionChanged"/>
                         </Grid>
 
-                        <!-- Detalhes do Cartão -->
                         <Border x:Name="BorderToHide" BorderBrush="#FF530411" BorderThickness="1" CornerRadius="5" Padding="15" Background="#FF1A1A1A" Visibility="Visible">
-                            <!-- Fundo escuro para o grupo -->
                             <StackPanel x:Name="panelDetails" Visibility="Visible">
                                 <TextBlock x:Name="genericLabel" Text="Card Number" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="genericTextBox" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
+                                <TextBox x:Name="genericTextBox" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10" Height="35"/>
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto" MinWidth="80"/>
                                     </Grid.ColumnDefinitions>
-
-                                    <StackPanel x:Name="panelCard"   Grid.Column="0" Margin="0,0,10,0">
+                                    <StackPanel x:Name="panelCard" Grid.Column="0" Margin="0,0,10,0">
                                         <TextBlock Text="Expiration Date" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
                                         <StackPanel Orientation="Horizontal" x:Name="cardDatePanel" Visibility="Visible">
-                                            <Syncfusion:UpDown x:Name="MonthUpDown" MinWidth="65" Margin="0,0,5,0"
+                                            <Syncfusion:UpDown x:Name="MonthUpDown" MinWidth="65" Height="35" Margin="0,0,5,0"
                                                                MinValue="1" MaxValue="12" NumberDecimalDigits="0" Step="1"
-                                                                FontFamily="{StaticResource OutfitRegular}" FontSize="13" BorderBrush="#FF530411" BorderThickness="1" CornerRadius="5"/>
+                                                               FontFamily="{StaticResource OutfitRegular}" FontSize="13" BorderBrush="#FF530411" BorderThickness="1" CornerRadius="5"/>
                                             <TextBlock Text="/" Foreground="White" VerticalAlignment="Center" Margin="0,0,5,0" FontFamily="{StaticResource OutfitSemiBold}"/>
                                             <Syncfusion:UpDown x:Name="YearUpDown"
-                                                Margin="0,0,5,0" MinWidth="50" Height="35" VerticalAlignment="Center"
-                                                               MinValue="2025" MaxValue="2040" NumberDecimalDigits="0" Step="1"                                                        
-                                                
-                                                        FontFamily="{StaticResource OutfitRegular}" FontSize="13" BorderBrush="#FF530411" BorderThickness="1" CornerRadius="5"/>
+                                                               Margin="0,0,5,0" MinWidth="60" Height="35" VerticalAlignment="Center"
+                                                               MinValue="2024" MaxValue="2040" NumberDecimalDigits="0" Step="1"                                                        
+                                                               FontFamily="{StaticResource OutfitRegular}" FontSize="13" BorderBrush="#FF530411" BorderThickness="1" CornerRadius="5"/>
                                         </StackPanel>
                                     </StackPanel>
-
                                     <StackPanel Grid.Column="1">
                                         <TextBlock x:Name="CCVLabel" Text="CCV" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                        <TextBox x:Name="txtCCV" Style="{StaticResource StyledTextBox}" MaxLength="4"/>
+                                        <TextBox x:Name="txtCCV" Style="{StaticResource StyledTextBox}" MaxLength="4" Height="35"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
                         </Border>
-
-                        <!-- Botão Concluir Compra -->
-                        <Button x:Name="btnCompletePurchase" Style="{StaticResource RoundedButton}" Margin="0,10,0,0" Height="45" Click="btnCompletePurchase_Click">
+                        <Button x:Name="btnCompletePurchase" Style="{StaticResource RoundedButton}" Margin="0,20,0,0" Height="45" Click="btnCompletePurchase_Click">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="✔" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE930;" FontWeight="Bold" FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Complete Purchase" FontSize="16" VerticalAlignment="Center" FontFamily="{StaticResource OutfitBold}"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
                 </Grid>
             </Border>
+
+            <Grid x:Name="processingPaymentOverlay"
+                  Grid.Row="2" 
+                  Background="#BB000000" Visibility="Collapsed" Panel.ZIndex="10"
+                  Margin="10,0,10,10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid Height="Auto" Width="250">
+                        <ProgressBar Height="20" IsIndeterminate="True" Foreground="#FF530411" Background="#FF333333" BorderThickness="0"/>
+                        <TextBlock Text="Processing payment..." Foreground="White" FontSize="14" FontFamily="{StaticResource OutfitMedium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

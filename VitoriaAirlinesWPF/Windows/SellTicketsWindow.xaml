@@ -3,16 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VitoriaAirlinesWPF.Windows" 
-        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf" 
+        xmlns:local="clr-namespace:VitoriaAirlinesWPF.Windows"
+        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
         Title="Sell Tickets" Height="Auto" Width="1150" SizeToContent="Height"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
 
-    
-
-        
     <Border CornerRadius="8" Background="#FFFDF5E6" BorderBrush="#FF530411" BorderThickness="3">
         <Grid>
             <Grid.RowDefinitions>
@@ -21,7 +18,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Botões de Controlo da Janela -->
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,10,0" Height="30" Orientation="Horizontal" FlowDirection="RightToLeft">
                 <Button x:Name="btnClose" Width="25" Height="25" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Tag="IsCloseButton" Click="btnClose_Click">
                     <Button.Template>
@@ -45,12 +41,10 @@
                 </Button>
             </StackPanel>
 
-            <!-- Barra de Título -->
             <Border Grid.Row="1" Background="#FF530411" CornerRadius="5,5,0,0" Margin="10,0,10,0">
                 <Label Content="Sell Tickets" FontSize="24" FontFamily="{StaticResource OutfitBold}" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,10"/>
             </Border>
 
-            <!-- Área de Conteúdo Principal -->
             <Border Grid.Row="2" Background="Black" CornerRadius="0,0,5,5" Padding="20" Margin="10,0,10,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -59,43 +53,19 @@
                         <ColumnDefinition Width="1.6*" MinWidth="400"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Coluna Esquerda: Info Voo, Tipo de Lugar, Lista de Lugares -->
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-
-                        <!-- SECÇÃO SUPERIOR COM "VOO SELECIONADO" E VALOR DO "Nº VOO" LADO A LADO -->
                         <Grid Margin="0,5,0,0">
-                            <!-- Margem inferior removida para o TextBlock Origem-Destino ficar mais perto -->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="140"/>
-                                <!-- Rótulo "Voo Selecionado" -->
                                 <ColumnDefinition Width="*"/>
-                                <!-- Espaço para o valor do Nº do Voo -->
                             </Grid.ColumnDefinitions>
-
-                            <!-- Rótulo "Voo Selecionado" (Esquerda) -->
                             <Border Grid.Column="0" Background="#FF530411" Padding="10,8" CornerRadius="5" Height="35" Margin="0,0,30,0">
                                 <TextBlock Text="Flight No" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-
-                            <!-- Valor do Nº de Voo (Direita, sem rótulo próprio, texto cinza) -->
-                            <TextBlock x:Name="txtFlightNumber" Text="" 
-                                       Foreground="#FFAAAAAA" 
-                                       FontFamily="{StaticResource OutfitRegular}" FontSize="14" 
-                                       VerticalAlignment="Center" HorizontalAlignment="Left" Width="46" Grid.ColumnSpan="2" Margin="123,0,0,0"/>
-                            <!-- Margem para separar do rótulo "Voo Selecionado" -->
+                            <TextBlock x:Name="txtFlightNumber" Text="" Foreground="#FFAAAAAA" FontFamily="{StaticResource OutfitRegular}" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Width="Auto" Grid.Column="1" Margin="0,0,0,0"/>
                         </Grid>
-
-                        <!-- Informação Origem-Destino abaixo de "Voo Selecionado" -->
-
-                        <TextBlock x:Name="txtFlightRouteInfo" Text="Origem - Destino: -" 
-                                   Foreground="#FFAAAAAA" 
-                                   FontFamily="{StaticResource OutfitRegular}" FontSize="13" 
-                                   Margin="5,2,0,10"/>
-
-
-                        <!-- Tipo de Lugar -->
+                        <TextBlock x:Name="txtFlightRouteInfo" Text="Origem - Destino: -" Foreground="#FFAAAAAA" FontFamily="{StaticResource OutfitRegular}" FontSize="13" Margin="5,2,0,10"/>
                         <Grid Margin="0,10,0,10">
-                            <!-- Margem superior para separar -->
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="110"/>
                                 <ColumnDefinition Width="*"/>
@@ -107,28 +77,24 @@
                                                     SelectionChanged="comboBoxSeatType_SelectionChanged"
                                                     Foreground="Black"/>
                         </Grid>
-
-                        <!-- Selecionar Lugares -->
                         <TextBlock Text="Select Seat:" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" Margin="0,10,0,5"/>
-                        <ListBox x:Name="listBoxAvailableSeats" Style="{StaticResource StyledListBox}" MinHeight="220" MaxHeight="280" SelectionMode="Multiple">
-                        </ListBox>
 
-                        <StackPanel x:Name="panelSeatLoading" Visibility="Collapsed" Margin="0,8,0,0">
-                            <TextBlock Text="Loading available seats..." 
-                                       Foreground="White" 
-                                       FontSize="14" 
-                                       FontFamily="{StaticResource OutfitSemiBold}" 
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,5"/>
-                            <ProgressBar x:Name="progressBarSeatLoading"
-                                         Height="20"
-                                         IsIndeterminate="True"
-                                         Foreground="#D1860E"
-                                         Background="#FF530411"/> 
-                        </StackPanel>
+                        <Grid MinHeight="220" MaxHeight="280">
+                            <ListBox x:Name="listBoxAvailableSeats" Style="{StaticResource StyledListBox}" SelectionMode="Single"
+                                     Visibility="Visible"/>
+
+                            <Border x:Name="panelSeatLoadingOverlay" Background="#AA000000" Visibility="Collapsed" Panel.ZIndex="5">
+                               
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Grid Height="Auto" Width="200">
+                                        <ProgressBar x:Name="progressBarSeatLoading" Height="20" IsIndeterminate="True" Foreground="#D1860E" Background="#FF530411" BorderThickness="0"/>
+                                        <TextBlock Text="Loading available seats..." Foreground="White" FontSize="14" FontFamily="{StaticResource OutfitMedium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </StackPanel>
 
-                    <!-- Coluna Central: Cliente, Dados Passageiro -->
                     <StackPanel Grid.Column="1" Margin="15,0,15,0">
                         <Grid Margin="0,5,0,2">
                             <Grid.ColumnDefinitions>
@@ -139,81 +105,65 @@
                             <Border Grid.Column="0" Background="#FF530411" Padding="10,8" CornerRadius="5" Height="35">
                                 <TextBlock Text="Select Client" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-
-                            <Button Grid.Column="2"
-                                    x:Name="btnRegisterNewClient" 
-                                    Content="Registar New Client" 
-                                    Style="{StaticResource ActionButtonGold}" 
-                                    Height="35"
-                                    MinWidth="150" 
-                                    Click="btnRegisterNewClient_Click"/>
+                            <Button Grid.Column="2" x:Name="btnRegisterNewClient" Content="Registar New Client" Style="{StaticResource ActionButtonGold}" Height="35" MinWidth="150" Click="btnRegisterNewClient_Click"/>
                         </Grid>
-                        <Syncfusion:ComboBoxAdv Grid.Column="1"
-                                                x:Name="comboBoxClients"
-                                                Style="{StaticResource StyledComboBox}"
-                                                Margin="0,5,0,0"
-                        DisplayMemberPath="NomeCompleto" 
-                                                SelectedValuePath="Id" 
-                                                SelectionChanged="comboBoxClients_SelectionChanged"/>
+                        <Syncfusion:ComboBoxAdv Grid.Column="1" x:Name="comboBoxClients" Style="{StaticResource StyledComboBox}" Margin="0,5,0,0" DisplayMemberPath="NomeCompleto" SelectedValuePath="Id" SelectionChanged="comboBoxClients_SelectionChanged"/>
+                        <Grid Margin="0,10,0,0">
+                            <Border x:Name="passengerDetailsBorder" BorderBrush="#FF530411" BorderThickness="2" CornerRadius="5" Padding="15" Background="#FF1A1A1A">
+                                <StackPanel x:Name="passengerDetailsPanel">
+                                    <TextBlock Text="Passenger Details" Foreground="White" FontFamily="{StaticResource OutfitBold}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,15"/>
+                                    <TextBlock Text="Full Name" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
+                                    <TextBox x:Name="txtFullName" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
+                                    <TextBlock Text="Passport" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
+                                    <TextBox x:Name="txtPassport" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
+                                    <TextBlock Text="Email" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
+                                    <TextBox x:Name="txtEmail" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
+                                    <TextBlock Text="Contact" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
+                                    <TextBox x:Name="txtContact" Style="{StaticResource StyledTextBox}" Margin="0,0,0,15"/>
+                                    <Button x:Name="btnAddPassenger" Style="{StaticResource ActionButtonDarkRed}" Click="btnAddPassenger_Click">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE8FA;" FontFamily="Segoe MDL2 Assets" 
+                                                       FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                            <TextBlock Text="Add Passenger" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
 
-                        <Border BorderBrush="#FF530411" BorderThickness="2" CornerRadius="5" Padding="15" Margin="0,10,0,0" Background="#FF1A1A1A">
-                            <StackPanel>
-                                <TextBlock Text="Passenger Details" Foreground="White" FontFamily="{StaticResource OutfitBold}" FontSize="16" HorizontalAlignment="Left" Margin="0,0,0,15"/>
-                                <TextBlock Text="Full Name" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtFullName" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
-                                <TextBlock Text="Passport" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtPassport" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
-                                <TextBlock Text="Email" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtEmail" Style="{StaticResource StyledTextBox}" Margin="0,0,0,10"/>
-                                <TextBlock Text="Contact" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" Margin="0,0,0,2"/>
-                                <TextBox x:Name="txtContact" Style="{StaticResource StyledTextBox}" Margin="0,0,0,15"/>
-                                <Button x:Name="btnAddPassenger" 
-                                        Style="{StaticResource ActionButtonDarkRed}" 
-                                        Click="btnAddPassenger_Click">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="➕" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                        <TextBlock Text="Add Passenger" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
-                        </Border>
+                            <Border x:Name="checkingPassengerOverlay" Background="#AA1A1A1A" Visibility="Collapsed" Panel.ZIndex="10" CornerRadius="5">
+                               
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Grid Height="Auto" Width="220">
+                                        <ProgressBar Height="20" IsIndeterminate="True" Foreground="#D1860E" Background="#FF530411" BorderThickness="0"/>
+                                        <TextBlock Text="Checking passenger..." Foreground="White" FontSize="14" FontFamily="{StaticResource OutfitMedium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </StackPanel>
 
-                    <!-- Coluna Direita: Carrinho e Ações -->
                     <Grid Grid.Column="2" Margin="40,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Cart"
-                                   Foreground="White"
-                                   FontFamily="{StaticResource OutfitBold}" 
-                                   FontSize="18" Margin="0,5,0,10"
-                                   />
-                        <DataGrid Grid.Row="1" x:Name="dataGridCart" 
-                                  Style="{StaticResource DataGridStyle1}" 
-                                  CellStyle="{StaticResource DataGridCellStyle1}"
-                                  ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
-                                  
-                            RowStyle="{StaticResource DataGridRowStyle1}">
+                        <TextBlock Grid.Row="0" Text="Cart" Foreground="White" FontFamily="{StaticResource OutfitBold}" FontSize="18" Margin="0,5,0,10"/>
+                        <DataGrid Grid.Row="1" x:Name="dataGridCart" Style="{StaticResource DataGridStyle1}" CellStyle="{StaticResource DataGridCellStyle1}" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}" RowStyle="{StaticResource DataGridRowStyle1}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Seat" Binding="{Binding Seat.Name}" Width="*" MinWidth="70" IsReadOnly="False"/>
-                                <DataGridTextColumn Header="Type" Binding="{Binding Seat.Type}" Width="Auto" MinWidth="60" IsReadOnly="False"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C, ConverterCulture='pt-PT'}" Width="Auto" MinWidth="80" IsReadOnly="False">
+                                <DataGridTextColumn Header="Seat" Binding="{Binding Seat.Name}" Width="*" MinWidth="70" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding Seat.Type}" Width="Auto" MinWidth="60" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C, ConverterCulture='pt-PT'}" Width="Auto" MinWidth="80" IsReadOnly="True">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                             <Setter Property="Margin" Value="0,0,5,0"/>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
-
                                     <DataGridTextColumn.HeaderStyle>
                                         <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeaderStyle1}">
-
                                             <Setter Property="HorizontalContentAlignment" Value="Right"/>
                                             <Setter Property="Padding" Value="5,5,10,5"/>
-
                                         </Style>
                                     </DataGridTextColumn.HeaderStyle>
                                 </DataGridTextColumn>
@@ -223,26 +173,21 @@
                         <StackPanel Grid.Row="2" VerticalAlignment="Bottom" Margin="0,10,0,0">
                             <Button x:Name="btnRemoveFromCart" Style="{StaticResource ActionButtonDarkRed}" Margin="0,0,0,8" Click="btnRemoveFromCart_Click">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="🗑️" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
                                     <TextBlock Text="Remove From Cart" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="btnCancelPurchase"
-                                    Style="{StaticResource ActionButtonCancelRed}"
-                                    Margin="0,0,0,15" 
-                                    Click="btnCancelPurchase_Click">
+                            <Button x:Name="btnCancelPurchase" Style="{StaticResource ActionButtonCancelRed}" Margin="0,0,0,15" Click="btnCancelPurchase_Click">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="❌" FontFamily="Segoe MDL2 Assets" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                    <TextBlock Text="Cancel Purchase" 
-                                               VerticalAlignment="Center"/>
+                                    <TextBlock Text="&#xE871;" FontFamily="Segoe MDL2 Assets" FontSize="30" VerticalAlignment="Center" Margin="0,0,8,10"/>
+                                    <TextBlock Text="Cancel Purchase" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
-                            <Button x:Name="btnProceedToCheckout"
-                                    Style="{StaticResource ActionButtonGold}"
-                                    Height="45"
-                                    Click="btnProceedToCheckout_Click">
+                            <Button x:Name="btnProceedToCheckout" Style="{StaticResource ActionButtonGold}" Height="45" Click="btnProceedToCheckout_Click">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="✔" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <TextBlock Text="&#xE930;" FontFamily="Segoe MDL2 Assets" FontSize="25" 
+                                               FontWeight="Bold"
+                                               VerticalAlignment="Center" Margin="0,0,10,0"/>
                                     <TextBlock Text="Proceed To Checkout" FontSize="16" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>

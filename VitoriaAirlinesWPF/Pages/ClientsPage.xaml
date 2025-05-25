@@ -1,10 +1,10 @@
 ﻿<Page x:Class="VitoriaAirlinesWPF.Pages.ClientsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:VitoriaAirlinesWPF.Pages"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Clients"
       Loaded="Page_Loaded">
@@ -13,21 +13,32 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Título + botão -->
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <!-- Lista -->
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
 
-            <!-- Linha 0: Título + Botão -->
-            <Grid Grid.Row="0" Margin="10">
+            <StackPanel x:Name="panelClientsLoading" Grid.Row="0" Visibility="Collapsed" Margin="10,5,10,5">
+                <Grid Height="Auto">
+                    <ProgressBar x:Name="progressBarClientsLoading"
+                                 Height="20"
+                                 IsIndeterminate="True"
+                                 Foreground="#FF530411"
+                                 Background="#FF1A1A1A"
+                                 BorderThickness="0"/>
+                    <TextBlock Text="Loading clients data..."
+                               x:Name="txtLoading"
+                               Foreground="White"
+                               FontSize="14"
+                               FontFamily="{StaticResource OutfitMedium}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </StackPanel>
+
+            <Grid x:Name="headerGrid" Grid.Row="1" Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <!-- Para o título -->
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Para o botão -->
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0"
@@ -38,15 +49,15 @@
                        VerticalAlignment="Center" />
 
                 <Button Grid.Column="1" x:Name="btnAddClient"
-                       Width="130"
-                       Height="35"
-                       Margin="10,0,0,0"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       FontFamily="{StaticResource OutfitMedium}"
-                       Background="#FF530411"
-                       Foreground="White"
-                       Click="btnAddClient_Click">
+                        Width="130"
+                        Height="35"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        FontFamily="{StaticResource OutfitMedium}"
+                        Background="#FF530411"
+                        Foreground="White"
+                        Click="btnAddClient_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Image Source="/Resources/Icons/add.png" Width="20" Height="20" Margin="5,0,5,0"/>
                         <TextBlock Text="Add New Client" VerticalAlignment="Center" Foreground="White" Margin="0 0 10 0"/>
@@ -54,27 +65,25 @@
                 </Button>
             </Grid>
 
-            <DataGrid Style="{DynamicResource DataGridStyle1}" 
-          CellStyle="{DynamicResource DataGridCellStyle1}" 
-          ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
-          RowStyle="{DynamicResource DataGridRowStyle1}" 
-          Grid.Row="1" x:Name="clientsDataGrid">
+            <DataGrid Style="{DynamicResource DataGridStyle1}"
+                      CellStyle="{DynamicResource DataGridCellStyle1}"
+                      ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}"
+                      RowStyle="{DynamicResource DataGridRowStyle1}"
+                      Grid.Row="2" x:Name="clientsDataGrid"
+                      Margin="10,0,10,10">
                 <DataGrid.Columns>
-
-                    <!-- ID Column -->
-                    <DataGridTemplateColumn Header="ID" IsReadOnly="true" Width="*">
+                    <DataGridTemplateColumn Header="ID" IsReadOnly="true" Width="Auto" MinWidth="60">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Border Width="25" Height="25" CornerRadius="50" Margin="0 0 10 0" Background="Red">
-                                        <TextBlock Text="{Binding Id}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Margin="0 0 0 1"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="25" Height="25" CornerRadius="12.5" Margin="5,0,10,0" Background="#FF530411">
+                                        <TextBlock Text="{Binding Id}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}"/>
                                     </Border>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>                    
+                    </DataGridTemplateColumn>
 
-                    <!-- Name Column -->
                     <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" Width="*" MinWidth="150" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -83,11 +92,9 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- City Column -->
-                    <DataGridTextColumn Header="Passport" IsReadOnly="True" Width="*"
+                    <DataGridTextColumn Header="Passport" IsReadOnly="True" Width="*" MinWidth="100"
                                         Binding="{Binding Passaport}"/>
 
-                    <!-- Country Column -->                   
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*" MinWidth="150" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
@@ -96,14 +103,13 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Phone Number" IsReadOnly="True" Width="*"
+                    <DataGridTextColumn Header="Phone Number" IsReadOnly="True" Width="*" MinWidth="120"
                                         Binding="{Binding Contact}"/>
 
-                    <!-- Operations Column -->
-                    <DataGridTemplateColumn Header="Operations" IsReadOnly="true" Width="*">
+                    <DataGridTemplateColumn Header="Operations" IsReadOnly="true" Width="Auto" MinWidth="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Button x:Name="btnEditClient" Width="20" Height="20" Background="DodgerBlue" BorderThickness="0" Margin="0,0,5,0" Click="btnEditClient_Click">
                                         <Image Source="/Resources/Icons/edit.png" Stretch="Uniform" Width="15" Height="15"/>
                                     </Button>
@@ -114,7 +120,6 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

@@ -65,7 +65,7 @@ namespace VitoriaAirlinesWPF.Windows
 
                 UpdateAirportData();
                
-
+                updatingAirportOverlay.Visibility = Visibility.Visible;
                
 
                 var response = await _airportService.UpdateAsync(_airportToEdit);
@@ -138,6 +138,7 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (response.IsSuccess)
             {
+                updatingAirportOverlay.Visibility = Visibility.Collapsed;
                 MessageBox.Show("Airport updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 await _airportsPage.LoadAirportsAsync();
                 this.Close();

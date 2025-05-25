@@ -59,7 +59,7 @@ namespace VitoriaAirlinesWPF.Pages
             }
             else
             {
-                MessageBox.Show("Sorry, no flights were found matching your search criteria.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("No flights were found matching your search criteria.", "Search Results", MessageBoxButton.OK, MessageBoxImage.Information);
                 dataGridFlightsResults.ItemsSource = null;
             }
         }
@@ -130,6 +130,9 @@ namespace VitoriaAirlinesWPF.Pages
 
         private async Task LoadFligthsAndTicketsAsync()
         {
+            btnSearchFlights.IsEnabled = false;
+            panelFlightsLoading.Visibility = Visibility.Visible;
+
             try
             {
                 var flightsResponse = await _flightService.GetAllAsync();
@@ -165,6 +168,11 @@ namespace VitoriaAirlinesWPF.Pages
             catch (Exception ex)
             {
                 MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                btnSearchFlights.IsEnabled = true;
+                panelFlightsLoading.Visibility = Visibility.Collapsed;
             }
         }
 

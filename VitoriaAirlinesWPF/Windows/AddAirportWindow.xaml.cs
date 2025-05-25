@@ -62,9 +62,14 @@ namespace VitoriaAirlinesWPF.Windows
 
                 var response = await _airportService.CreateAsync(newAirport);
 
+                creatingAirportOverlay.Visibility = Visibility.Visible;
+
                 if (response.IsSuccess)
                 {
                     MessageBox.Show("Airport added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    creatingAirportOverlay.Visibility = Visibility.Collapsed;
+
                     await _airportsPage.LoadAirportsAsync();
                     this.Close();
                 }

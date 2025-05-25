@@ -54,6 +54,7 @@ namespace VitoriaAirlinesWPF.Pages
             if (isUsed)
             {
                 MessageBox.Show($"The Airport '{selectedAirport.Name}' cannot be updated because it has been used in flights.");
+                return;
             }
 
             var editAirportWindow = new EditAirportWindow(this, selectedAirport);
@@ -62,8 +63,12 @@ namespace VitoriaAirlinesWPF.Pages
         }
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            panelAirportsLoading.Visibility = Visibility.Visible;
+
             await LoadAirportsAsync();
             await LoadFlightsAsync();
+
+            panelAirportsLoading.Visibility = Visibility.Collapsed;
         }
 
         #endregion
@@ -118,18 +123,26 @@ namespace VitoriaAirlinesWPF.Pages
 
 		private async Task DeleteAirportAsync(int airportId)
 		{
+            panelAirportsLoading.Visibility = Visibility.Visible;
+            txtAirports.Text = "Deleting airport.";
+
 			var response = await _airportService.DeleteAsync(airportId);
 
 			if (response.IsSuccess)
 			{
 				MessageBox.Show("Airport deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-				await LoadAirportsAsync();
+				
 			}
 			else
 			{
 				MessageBox.Show($"Error deleting airport: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
-		}
+
+            panelAirportsLoading.Visibility = Visibility.Collapsed;
+
+            await LoadAirportsAsync();
+            
+        }
 
 		#endregion
 

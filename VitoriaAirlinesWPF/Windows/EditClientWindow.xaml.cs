@@ -47,13 +47,10 @@ namespace VitoriaAirlinesWPF.Windows
 
                 UpdateClienteData();
 
-                
-
-                
+                updatingClientOverlay.Visibility = Visibility.Visible;                
 
                 var response = await _clientService.UpdateAsync(_clientToEdit);
                 await HandleUpdateResponseAsync(response);
-
 
                
             }
@@ -151,6 +148,7 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (response.IsSuccess)
             {
+                updatingClientOverlay.Visibility = Visibility.Collapsed;
                 MessageBox.Show("Client updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 await _clientsPage.LoadClients();
                 this.Close();

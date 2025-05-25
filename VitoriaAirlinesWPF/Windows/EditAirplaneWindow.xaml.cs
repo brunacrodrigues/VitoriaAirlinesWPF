@@ -66,6 +66,8 @@ namespace VitoriaAirlinesWPF.Windows
 
                 UpdateAirplaneData();
 
+                savingModelOverlay.Visibility = Visibility.Visible;
+
                 var response = await _airplaneService.UpdateAsync(_airplaneToEdit);
 
                 await HandleUpdateResponseAsync(response);
@@ -157,14 +159,19 @@ namespace VitoriaAirlinesWPF.Windows
         {
             if (response.IsSuccess)
             {
+               
                 MessageBox.Show("Airplane model updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                await _airplanesPage.LoadAirplanesAsync();
-                this.Close();
+                
             }
             else
             {
+                
                 MessageBox.Show($"Error updating airplane model: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                
             }
+            savingModelOverlay.Visibility = Visibility.Collapsed;
+            await _airplanesPage.LoadAirplanesAsync();
+            this.Close();
         }
 
         #endregion

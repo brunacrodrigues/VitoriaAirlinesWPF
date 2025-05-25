@@ -84,13 +84,20 @@ namespace VitoriaAirlinesWPF.Windows
 					EconomicPrice = economicPrice,
 
 				};
-				var response = await _flightService.CreateAsync(newFlight);
+
+                schedulingFlightOverlay.Visibility = Visibility.Visible;
+
+                var response = await _flightService.CreateAsync(newFlight);				
 
 				if (response.IsSuccess)
 				{
-					MessageBox.Show("Flight created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    schedulingFlightOverlay.Visibility = Visibility.Collapsed;
 
-					await _flightsPage.LoadFlightsAsync();
+                    MessageBox.Show("Flight created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    
+
+                    await _flightsPage.LoadFlightsAsync();
 
 					this.Close();
 				}

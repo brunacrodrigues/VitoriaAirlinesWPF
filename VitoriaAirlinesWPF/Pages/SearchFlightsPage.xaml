@@ -1,55 +1,73 @@
 ﻿<Page x:Class="VitoriaAirlinesWPF.Pages.SearchFlightsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:VitoriaAirlinesWPF.Pages"
-      xmlns:Syncfusion="http://schemas.syncfusion.com/wpf" 
-    mc:Ignorable="d" 
+      xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
+      mc:Ignorable="d"
       d:DesignHeight="780" d:DesignWidth="1100"
       Title="Search Flights"
       Loaded="Page_Loaded">
 
     <Border Background="Black" CornerRadius="5" Padding="25">
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" MinWidth="340" MaxWidth="400"/>
-                <!-- Coluna para os filtros de pesquisa -->
-                <ColumnDefinition Width="20"/>
-                <!-- Espaçador -->
-                <ColumnDefinition Width="*" MinWidth="450"/>
-                <!-- Coluna para os resultados da pesquisa -->
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <!-- Coluna Esquerda: Filtros de Pesquisa -->
-            <Border Grid.Column="0" Background="#FF1A1A1A" CornerRadius="8" Padding="15" BorderBrush="#FF530411" BorderThickness="1.5">
-                
-                    <!-- MODIFICADO AQUI -->
+            <StackPanel x:Name="panelFlightsLoading" Grid.Row="0" Visibility="Visible" Margin="0,-10,10,5">
+                <Grid Height="Auto">
+                    <ProgressBar x:Name="progressBarFlightsLoading"
+                                 Height="20"
+                                 IsIndeterminate="True"
+                                 Foreground="#FF530411"
+                                 Background="#FF1A1A1A"
+                                 BorderThickness="0"/>
+                   
+                    <TextBlock Text="Loading flights data..." 
+                               Foreground="White"
+                               FontSize="14"
+                               FontFamily="{StaticResource OutfitMedium}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </StackPanel>
+
+            <Grid x:Name="mainContentGrid" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" MinWidth="340" MaxWidth="400"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*" MinWidth="450"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="#FF1A1A1A" CornerRadius="8" Padding="15" BorderBrush="#FF530411" BorderThickness="1.5">
                     <StackPanel>
-                        <!-- TÍTULO PRINCIPAL-->
-                        <TextBlock Text="Search Flights" 
-                                   Foreground="#FFF8DC"
-                                   FontFamily="{StaticResource OutfitBold}" 
+
+                        <TextBlock Text="Search Flights"
+                                   Foreground="White"
+                                   FontFamily="{StaticResource OutfitBold}"
                                    FontSize="24" Margin="0,0,0,15" HorizontalAlignment="Left"/>
 
                         <!-- CheckBoxes de Tipo de Viagem -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,25">
-                            <CheckBox x:Name="checkboxRoundTrip" 
-                                      Content="Round Trip" 
-                                      Foreground="White" 
+                            <CheckBox x:Name="checkboxRoundTrip"
+                                      Content="Round Trip"
+                                      Foreground="White"
                                       FontFamily="{StaticResource OutfitSemiBold}"
                                       FontSize="13"
-                                Checked="checkboxRoundTrip_Checked"
+                                      Checked="checkboxRoundTrip_Checked"
                                       Unchecked="checkboxRoundTrip_Unchecked"
                                       Margin="0,0,15,0"/>
 
-                            <CheckBox x:Name="chkOneWay" 
-                                      Content="One Way" 
+                            <CheckBox x:Name="chkOneWay"
+                                      Content="One Way"
                                       Foreground="White"
                                       FontFamily="{StaticResource OutfitSemiBold}"
                                       FontSize="13"
                                       IsChecked="False"
-                                      Checked="chkOneWay_Checked" 
+                                      Checked="chkOneWay_Checked"
                                       Unchecked="chkOneWay_Unchecked">
                                 <CheckBox.Style>
                                     <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}"/>
@@ -61,19 +79,18 @@
                         <Border Background="#FF530411" Padding="10,8" CornerRadius="5" Height="30" Margin="0,0,0,2">
                             <TextBlock Text="Origin" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <Syncfusion:ComboBoxAdv x:Name="comboOrigin" 
+                        <Syncfusion:ComboBoxAdv x:Name="comboOrigin"
                                                 Height="30"
                                                 Style="{StaticResource StyledComboBox}" Margin="0,0,0,5"
                                                 DisplayMemberPath="Name" SelectedValuePath="Id" Foreground="Black" FontFamily="{StaticResource OutfitRegular}"/>
 
                         <!-- Swap Button -->
-                        <Button x:Name="btnSwapDestinations" HorizontalAlignment="Right" Margin="0,0,0,5" 
+                        <Button x:Name="btnSwapDestinations" HorizontalAlignment="Right" Margin="0,0,0,5"
                                 ToolTip="Swap Origin and Destination"
                                 Click="btnSwapDestinations_Click"
                                 Style="{StaticResource ActionButtonGold}"
                                 Height="20">
-
-                            <Image Source="/Resources/Icons/add.png" Width="20" Height="20"/>
+                            <Image Source="/Resources/Icons/swap.png" Width="20" Height="20"/>
                         </Button>
 
                         <!-- Destino -->
@@ -94,14 +111,13 @@
 
                         <!-- Data de Regresso (para Ida e Volta) -->
                         <Border x:Name="brdReturnDateLabel" Background="#FF530411" Padding="10,8" CornerRadius="5" Height="30" Margin="0,0,0,2" Visibility="Visible">
-                            <!-- Mantido Visible para teste, ajuste no code-behind -->
                             <TextBlock Text="Return Date" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <DatePicker x:Name="dpReturnDate" Height="30" Margin="0,0,0,15" Visibility="Visible" FontFamily="{StaticResource OutfitRegular}"/>
 
 
                         <!-- Número de Passageiros -->
-                        <TextBlock Text="Numbers of Passengers" Foreground="#FFF8DC" FontFamily="{StaticResource OutfitSemiBold}" FontSize="15" Margin="0,10,0,8"/>
+                        <TextBlock Text="Numbers of Passengers" Foreground="#FFFDF5E6" FontFamily="{StaticResource OutfitSemiBold}" FontSize="15" Margin="0,10,0,8"/>
                         <Grid Margin="0,0,0,15">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -121,7 +137,6 @@
                             <StackPanel Grid.Column="2" Margin="5,0,0,0">
                                 <TextBlock Text="Infants" Foreground="white" FontSize="12" Margin="0,0,0,1" FontFamily="{StaticResource OutfitRegular}"/>
                                 <TextBlock Text="(- 2 y/o)" Foreground="#FF888888" FontSize="10" Margin="0,0,0,2" FontFamily="{StaticResource OutfitRegular}"/>
-
                                 <Syncfusion:UpDown x:Name="udInfants" MinValue="0" MaxValue="9" Value="0" NumberDecimalDigits="0"/>
                             </StackPanel>
                         </Grid>
@@ -137,74 +152,85 @@
                         <!-- Botão Pesquisar -->
                         <Button x:Name="btnSearchFlights" Style="{StaticResource ActionButtonGold}" Height="45" Click="btnSearchFlights_Click">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🔍" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock Text="&#xE71E;" FontWeight="Bold" FontFamily="Segoe MDL2 Assets" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                 <TextBlock Text="Search Flights" FontSize="16" VerticalAlignment="Center" FontFamily="{StaticResource OutfitBold}"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Coluna Direita: Resultados da Pesquisa (DataGrid) -->
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <!-- Para o Ordenar Por -->
-                    <RowDefinition Height="*"/>
-                    <!-- Para o DataGrid -->
-                </Grid.RowDefinitions>
+                <!-- Coluna Direita: Resultados da Pesquisa (DataGrid) -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Ordenar Por -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,15">
-                    <TextBlock Text="Sort by:" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14"/>
-                    <Syncfusion:ComboBoxAdv x:Name="comboSortBy"
-                                            Width="180" 
-                                            Style="{StaticResource StyledComboBox}" 
-                                            Foreground="Black" 
-                                            FontFamily="{StaticResource OutfitRegular}"
-                                            SelectionChanged="comboSortBy_SelectionChanged">
-                        <Syncfusion:ComboBoxItemAdv Content="Price"/>
-                        <Syncfusion:ComboBoxItemAdv Content="Duration"/>
-                        <Syncfusion:ComboBoxItemAdv Content="Departure Time"/>
-                    </Syncfusion:ComboBoxAdv>
-                </StackPanel>
+                    <!-- Ordenar Por -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,15">
+                        <TextBlock Text="Sort by:" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14"/>
+                        <Syncfusion:ComboBoxAdv x:Name="comboSortBy"
+                                                Width="180"
+                                                Style="{StaticResource StyledComboBox}"
+                                                Foreground="Black"
+                                                FontFamily="{StaticResource OutfitRegular}"
+                                                SelectionChanged="comboSortBy_SelectionChanged">
+                            <Syncfusion:ComboBoxItemAdv Content="Price"/>
+                            <Syncfusion:ComboBoxItemAdv Content="Duration"/>
+                            <Syncfusion:ComboBoxItemAdv Content="Departure Time"/>
+                        </Syncfusion:ComboBoxAdv>
+                    </StackPanel>
 
-                <!-- DataGrid -->
-                <DataGrid x:Name="dataGridFlightsResults" Grid.Row="1"
-                          Style="{StaticResource DataGridStyle1}" 
-                          CellStyle="{StaticResource DataGridCellStyle1}"
-                          ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
-                          RowStyle="{StaticResource DataGridRowStyle1}"
-                          MaxHeight="700" 
-                          AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
-
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Flight No" Binding="{Binding FlightNumber}" Width="Auto" MinWidth="80"/>
-                        <DataGridTextColumn Header="From" Binding="{Binding Origin.IATA}" Width="*" MinWidth="70"/>
-                        <DataGridTextColumn Header="To" Binding="{Binding Destination.IATA}" Width="*" MinWidth="80"/>
-                        <DataGridTextColumn Header="Departure Date" Binding="{Binding DepartureDateTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="Auto" MinWidth="130"/>
-                        <DataGridTextColumn Header="Arrival Date" Binding="{Binding ArrivalDateTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="Auto" MinWidth="130"/>
-                        <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="Auto" MinWidth="80"/>
-                        <DataGridTextColumn Header="Price" Binding="{Binding DisplayPrice, StringFormat=C, ConverterCulture='pt-PT'}" Width="Auto" MinWidth="100">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="Margin" Value="0,0,5,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                            <DataGridTextColumn.HeaderStyle>
-                                <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource DataGridColumnHeaderStyle1}">
-                                    <Setter Property="HorizontalContentAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.HeaderStyle>
-                        </DataGridTextColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-
-                <TextBlock x:Name="txtNoFlightsFound" Grid.Row="1" Text="Nenhum voo encontrado com os critérios selecionados."
-                           Foreground="#FFAAAAAA" FontSize="18" FontFamily="{StaticResource OutfitRegular}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Visibility="Collapsed" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <!-- DataGrid -->
+                    <DataGrid x:Name="dataGridFlightsResults" Grid.Row="1"
+                              Style="{StaticResource DataGridStyle1}"
+                              CellStyle="{StaticResource DataGridCellStyle1}"
+                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle1}"
+                              RowStyle="{StaticResource DataGridRowStyle1}"
+                              MaxHeight="700"
+                              AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Flight No" Binding="{Binding FlightNumber}" Width="Auto" MinWidth="80"/>
+                            <DataGridTextColumn Header="From" Binding="{Binding Origin.IATA}" Width="*" MinWidth="70"/>
+                            <DataGridTextColumn Header="To" Binding="{Binding Destination.IATA}" Width="*" MinWidth="80"/>
+                            <DataGridTextColumn Header="Departure Date" Binding="{Binding DepartureDateTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="Auto" MinWidth="130"/>
+                            <DataGridTextColumn Header="Arrival Date" Binding="{Binding ArrivalDateTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="Auto" MinWidth="130"/>
+                            <DataGridTextColumn Header="Duration" Binding="{Binding Duration}" Width="Auto" MinWidth="80"/>
+                            <DataGridTextColumn Header="Price" Binding="{Binding DisplayPrice, StringFormat=C, ConverterCulture='pt-PT'}" Width="Auto" MinWidth="100">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="Margin" Value="0,0,5,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource DataGridColumnHeaderStyle1}">
+                                        <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Grid>
+            <Grid x:Name="searchLoadingOverlay" Grid.Row="1" Grid.ColumnSpan="3" Background="#801A1A1A" Visibility="Collapsed" Panel.ZIndex="50">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid Height="Auto" Width="200">
+                        <ProgressBar Height="20"
+                                     IsIndeterminate="True"
+                                     Foreground="#FF530411"
+                                     Background="#FF333333"
+                                     BorderThickness="0"/>
+                        <TextBlock Text="Searching flights..."
+                                   Foreground="White"
+                                   FontSize="14"
+                                   FontFamily="{StaticResource OutfitSemiBold}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
+
         </Grid>
     </Border>
 </Page>

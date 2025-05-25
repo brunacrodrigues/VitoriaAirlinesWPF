@@ -34,10 +34,14 @@ namespace VitoriaAirlinesWPF.Windows
                     EconomicSeats = (int)EconomicSeatsUpDown.Value,
                 };
 
+                creatingModelOverlay.Visibility = Visibility.Visible;
+
                 var response = await _airplaneService.CreateAsync(newAirplaneModel);
 
                 if (response.IsSuccess)
                 {
+                    creatingModelOverlay.Visibility = Visibility.Collapsed;
+
 					MessageBox.Show("Airplane model created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
 					await _airplanesPage.LoadAirplanesAsync();

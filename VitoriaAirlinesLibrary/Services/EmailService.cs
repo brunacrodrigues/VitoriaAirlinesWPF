@@ -10,24 +10,32 @@ namespace VitoriaAirlinesLibrary.Services
     {
         private async Task SendEmailAsync(string from, List<string> to, string subject, string body)
         {
-            MailAddress fromMailAddress = new MailAddress(from);
-
-            MailMessage mail = new MailMessage();
-
-            foreach (string email in to)
+            try
             {
-                mail.To.Add(email);
+                MailAddress fromMailAddress = new MailAddress(from);
+
+                MailMessage mail = new MailMessage();
+
+                foreach (string email in to)
+                {
+                    mail.To.Add(email);
+                }
+
+                mail.From = fromMailAddress;
+                mail.Subject = subject;
+                mail.Body = body;
+                mail.IsBodyHtml = true;
+
+                SmtpClient client = GetSmtpClient();
+
+                await client.SendMailAsync(mail);
             }
-
-            mail.From = fromMailAddress;
-            mail.Subject = subject;
-            mail.Body = body;
-            mail.IsBodyHtml = true;
-
-            SmtpClient client = GetSmtpClient();
-
-            await client.SendMailAsync(mail);
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to send email.", ex);
+            }
         }
+
 
         private SmtpClient GetSmtpClient()
         {

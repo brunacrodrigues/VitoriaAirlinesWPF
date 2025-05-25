@@ -16,10 +16,12 @@
     <None Remove="Resources\flights.png" />
     <None Remove="Resources\Fonts\Outfit-Bold.ttf" />
     <None Remove="Resources\Icons\add.png" />
+    <None Remove="Resources\Icons\confirm.png" />
     <None Remove="Resources\Icons\delete.png" />
     <None Remove="Resources\Icons\edit.png" />
     <None Remove="Resources\Icons\icons8-up-40.png" />
     <None Remove="Resources\Icons\seat.png" />
+    <None Remove="Resources\Icons\swap.png" />
     <None Remove="Resources\Icons\tickets2.png" />
     <None Remove="Resources\location.png" />
     <None Remove="Resources\logo.png" />
@@ -37,6 +39,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\confirm.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\delete.png">
@@ -85,6 +90,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\seat.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\swap.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Icons\tickets.png">

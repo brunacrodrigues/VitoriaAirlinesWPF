@@ -57,15 +57,13 @@ namespace VitoriaAirlinesWPF.Windows
         {
             txtFullName.Text = _ticketToChangeSeat.Client.FullName;
             txtPassport.Text = _ticketToChangeSeat.Client.Passaport;
-            txtEmail.Text = _ticketToChangeSeat.Client.Email;
-            txtContact.Text = _ticketToChangeSeat.Client.Contact;
-            txtSeat.Text = $"{_ticketToChangeSeat.Seat.Name} {_ticketToChangeSeat.Seat.Type}";
+            txtCurrentSeat.Text = $"{_ticketToChangeSeat.Seat.Name} {_ticketToChangeSeat.Seat.Type}";
         }
 
         public async Task LoadAvailableSeatsAsync()
         {
             comboBoxSeatType.IsEnabled = false;
-            panelSeatLoading.Visibility = Visibility.Visible;
+            panelSeatLoadingOverlay.Visibility = Visibility.Visible;
 
 
             try
@@ -87,7 +85,7 @@ namespace VitoriaAirlinesWPF.Windows
             }
             finally
             {
-                panelSeatLoading.Visibility = Visibility.Collapsed;
+                panelSeatLoadingOverlay.Visibility = Visibility.Collapsed;
 
                 if (comboBoxSeatType.Items.Count > 0)
                 {

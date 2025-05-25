@@ -53,10 +53,15 @@ namespace VitoriaAirlinesWPF.Windows
 			bool departureOrDurationChanged = _flightToEdit.DepartureTime != originalDepartureTime ||
 													 _flightToEdit.Duration != originalDuration;
 
-			var updateResponse = await _flightService.UpdateAsync(_flightToEdit);
+			savingFlightOverlay.Visibility = Visibility.Visible;
+
+            var updateResponse = await _flightService.UpdateAsync(_flightToEdit);
+
 			if (updateResponse.IsSuccess)
 			{
-				MessageBox.Show("Flight updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                savingFlightOverlay.Visibility = Visibility.Collapsed;
+
+                MessageBox.Show("Flight updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
 				if (departureOrDurationChanged)
 				{
@@ -77,7 +82,10 @@ namespace VitoriaAirlinesWPF.Windows
 		{
 			var clientsResponse = await _flightService.GetClientsForFlightAsync(updatedFlight.Id);
 
-			if (clientsResponse.IsSuccess)
+            savingFlightOverlay.Visibility = Visibility.Visible;
+			txtMessgage.Text = "Notifying passengers...";
+
+            if (clientsResponse.IsSuccess)
 			{
 				if (clientsResponse.Result is List<Client> flightPassengers && flightPassengers.Any())
 				{
@@ -89,7 +97,9 @@ namespace VitoriaAirlinesWPF.Windows
 						return;
 					}
 
-					MessageBox.Show("Flight passengers were notified about flight changes.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    savingFlightOverlay.Visibility = Visibility.Collapsed;
+
+                    MessageBox.Show("Flight passengers were notified about flight changes.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 				}
 
 				else

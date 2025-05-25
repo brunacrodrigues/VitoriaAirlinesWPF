@@ -76,6 +76,8 @@ namespace VitoriaAirlinesWPF.Windows
 
             DisableUI();
 
+            processingPaymentOverlay.Visibility = Visibility.Visible;
+
             try
             {
                 
@@ -108,6 +110,10 @@ namespace VitoriaAirlinesWPF.Windows
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred during the purchase process: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                processingPaymentOverlay.Visibility = Visibility.Collapsed;
             }
         }
 

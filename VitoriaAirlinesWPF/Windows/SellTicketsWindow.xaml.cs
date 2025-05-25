@@ -67,6 +67,8 @@ namespace VitoriaAirlinesWPF.Windows
             var client = await GetOrCreateClientAsync();
             if (client == null) return;
 
+            checkingPassengerOverlay.Visibility = Visibility.Visible;
+
             if (!await CheckClientDuplicateTicketAsync(client)) return;
 
             AssignSeatToClient(client);
@@ -230,13 +232,18 @@ namespace VitoriaAirlinesWPF.Windows
 
         private async Task<bool> CheckClientDuplicateTicketAsync(Client client)
         {
+
             var checkResponse = await _flightService.CheckIfClientHasTicketFlightAsync(_selectedFlight.Id, client.Id);
 
             if (checkResponse.IsSuccess && checkResponse.Result is bool hasTicket && hasTicket)
             {
+                checkingPassengerOverlay.Visibility = Visibility.Collapsed;
+
                 MessageBox.Show("This client already has a ticket for this flight.", "Duplicate Ticket", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
+            checkingPassengerOverlay.Visibility = Visibility.Collapsed;
+
 
             return true;
         }
@@ -476,7 +483,7 @@ namespace VitoriaAirlinesWPF.Windows
         public async Task LoadAvailableSeatsAsync()
         {
             DisableUI();
-            panelSeatLoading.Visibility = Visibility.Visible;
+            panelSeatLoadingOverlay.Visibility = Visibility.Visible;
 
 
             try
@@ -498,7 +505,7 @@ namespace VitoriaAirlinesWPF.Windows
             }
             finally
             {
-                panelSeatLoading.Visibility = Visibility.Collapsed;
+                panelSeatLoadingOverlay.Visibility = Visibility.Collapsed;
 
                 if (comboBoxSeatType.Items.Count > 0)
                 {

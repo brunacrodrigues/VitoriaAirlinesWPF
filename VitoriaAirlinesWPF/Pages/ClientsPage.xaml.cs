@@ -56,6 +56,8 @@ namespace VitoriaAirlinesWPF.Pages
 
         public async Task LoadClients()
         {
+            panelClientsLoading.Visibility = Visibility.Visible;
+
             List<Client> Clients = new List<Client>();
 
             var response = await _clientService.GetAllAsync();
@@ -67,6 +69,9 @@ namespace VitoriaAirlinesWPF.Pages
                 clientsDataGrid.ItemsSource = null;
                 clientsDataGrid.ItemsSource = Clients;
             }
+
+            panelClientsLoading.Visibility = Visibility.Collapsed;
+
         }
 
 		private async Task<bool> ClientExistsAsync(int clientId)
@@ -94,18 +99,24 @@ namespace VitoriaAirlinesWPF.Pages
 
 		private async Task DeleteClientAsync(int clientId)
 		{
+            panelClientsLoading.Visibility = Visibility.Visible;
+            txtLoading.Text = "Deleting client...";
+
 			var response = await _clientService.DeleteAsync(clientId);
 
 			if (response.IsSuccess)
 			{
 				MessageBox.Show("Client deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-				await LoadClients();
+				
 			}
 			else
 			{
 				MessageBox.Show($"Error deleting client: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
-		}
+
+            panelClientsLoading.Visibility = Visibility.Visible;
+            await LoadClients();
+        }
 
 	}
 }

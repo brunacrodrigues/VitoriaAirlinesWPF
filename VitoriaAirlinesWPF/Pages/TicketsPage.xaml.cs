@@ -98,6 +98,8 @@ namespace VitoriaAirlinesWPF.Pages
 
                 if(confirmResult == MessageBoxResult.Yes)
                 {
+                    panelLoading.Visibility= Visibility.Visible;
+                    txtLoadingMessage.Text = "Cancelling ticket...";
 
                     var response = await _ticketService.CancelTicketAsync(selectedTicket.Id);
 
@@ -111,12 +113,16 @@ namespace VitoriaAirlinesWPF.Pages
                     {
                         MessageBox.Show($"Failed to cancel ticket.\nReason: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+
+                panelLoading.Visibility = Visibility.Collapsed;
             }
            
         }
 
         public async Task LoadFlightTicketsAsync(Flight flight)
         {
+            panelLoading.Visibility = Visibility.Visible;
+
             try
             {
                 var ticketsResponse = await _flightService.GetTicketsForFlightAsync(flight.Id);
@@ -174,6 +180,10 @@ namespace VitoriaAirlinesWPF.Pages
 
                 MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 dataGridTickets.ItemsSource = null;
+            }
+            finally
+            {
+                panelLoading.Visibility = Visibility.Collapsed;
             }
         }
 

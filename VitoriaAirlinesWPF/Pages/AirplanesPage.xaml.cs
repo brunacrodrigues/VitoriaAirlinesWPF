@@ -67,6 +67,8 @@ namespace VitoriaAirlinesWPF.Pages
         #region Methods
         public async Task LoadAirplanesAsync()
         {
+            panelAirplanesLoading.Visibility = Visibility.Visible;
+
             List<Airplane> Airplanes = new List<Airplane>();
 
             var response = await _airplaneService.GetAllAsync();
@@ -77,6 +79,8 @@ namespace VitoriaAirlinesWPF.Pages
                 airplanesDataGrid.ItemsSource = null;
                 airplanesDataGrid.ItemsSource = Airplanes;
             }
+
+            panelAirplanesLoading.Visibility = Visibility.Collapsed;
         }
 
 		private async Task<bool> AirplaneExistsAsync(int airplaneId)
@@ -104,7 +108,11 @@ namespace VitoriaAirlinesWPF.Pages
 
 		private async Task DeleteAirplaneAsync(Airplane airplane)
 		{
-			var response = await _airplaneService.DeleteAsync(airplane.Id);
+            panelAirplanesLoading.Visibility = Visibility.Visible;
+
+            txtAirplanes.Text = "Deleting model...";
+
+            var response = await _airplaneService.DeleteAsync(airplane.Id);
 
 			if (response.IsSuccess)
 			{
@@ -113,7 +121,7 @@ namespace VitoriaAirlinesWPF.Pages
 			}
 			else
 			{
-                var result = MessageBox.Show($"{response.Message}, Would you like to set it as 'Inactive' instead?", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var result = MessageBox.Show($"{response.Message}, Would you like to set it as 'Inactive' instead?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Error);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -124,12 +132,14 @@ namespace VitoriaAirlinesWPF.Pages
                     if (updateResponse.IsSuccess)
                     {
                         MessageBox.Show("Model set as inactive.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await LoadAirplanesAsync();
+                        
                     }
                     else
                     {
                         MessageBox.Show($"Failed to set as inactive: {updateResponse.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
+                    panelAirplanesLoading.Visibility = Visibility.Collapsed;
+                    await LoadAirplanesAsync();
                 }
 			}
 

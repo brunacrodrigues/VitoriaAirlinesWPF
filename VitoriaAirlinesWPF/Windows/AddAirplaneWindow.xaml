@@ -5,44 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VitoriaAirlinesWPF.Windows" xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
-        Title="AddAirplaneWindow" Height="450" Width="700" WindowStyle="None" AllowsTransparency="True">
+        Title="AddAirplaneWindow" Height="420" Width="650" WindowStyle="None" AllowsTransparency="True">
 
     <Border CornerRadius="8" Background="#FFFDF5E6" BorderBrush="#FF530411" BorderThickness="3">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Linha 0: Botões -->
                 <RowDefinition Height="Auto"/>
-                <!-- Linha 1: Título -->
                 <RowDefinition Height="*"/>
-                <!-- Linha 2: Conteúdo -->
             </Grid.RowDefinitions>
 
-            <!-- Linha 0: Botões de Controle -->
             <StackPanel Grid.Row="0"
-                        HorizontalAlignment="Right" 
-                        VerticalAlignment="Top" 
-                        Margin="0,5,10,0" 
-                        Height="30" 
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,5,10,0"
+                        Height="30"
                         Orientation="Horizontal"
                         FlowDirection="RightToLeft">
-                <!-- Close Button -->
-                <Button x:Name="btnClose"
-                        Width="25"
-                        Height="25"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        BorderThickness="0"
-                        Margin="4,0"
-                        Click="btnClose_Click"
-                        Tag="IsCloseButton">
+                <Button x:Name="btnClose" Width="25" Height="25" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Click="btnClose_Click" Tag="IsCloseButton">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="border"
-                                    Background="Transparent"
-                                    BorderBrush="Transparent"
-                                    BorderThickness="0"
-                                    CornerRadius="5">
+                            <Border x:Name="border" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
                                 <Image Source="/Resources/Icons/close.png" Width="15" Height="15" />
                             </Border>
                             <ControlTemplate.Triggers>
@@ -53,23 +36,14 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
-                <!-- Restore Button -->
                 <Button x:Name="btnRestore" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Click="btnRestore_Click">
-                    <Button.Content>
-                        <Image x:Name="btnIcon" Source="/Resources/Icons/restore.png" Width="15" Height="15"/>
-                    </Button.Content>
+                    <Image x:Name="btnIcon" Source="/Resources/Icons/restore.png" Width="15" Height="15"/>
                 </Button>
-
-                <!-- Minimize Button -->
                 <Button x:Name="btnMinimize" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Margin="4,0" Click="btnMinimize_Click">
-                    <Button.Content>
-                        <Image Source="/Resources/Icons/minimize.png" Width="15" Height="15"/>
-                    </Button.Content>
+                    <Image Source="/Resources/Icons/minimize.png" Width="15" Height="15"/>
                 </Button>
             </StackPanel>
 
-            <!-- Linha 1: Título -->
             <Border Grid.Row="1" Background="#FF530411" CornerRadius="5">
                 <Label Content="Add New Model"
                        FontSize="24"
@@ -80,10 +54,9 @@
                        Margin="10,10,0,10" />
             </Border>
 
-            <!-- Linha 2: Form Container -->
-            <Border Grid.Row="2" Background="Black" CornerRadius="20" Padding="30" Margin="20,20,20,20">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="600">
-
+            <!-- Linha 2: Form Container (mantendo seu layout original) -->
+            <Border x:Name="formContainerBorder" Grid.Row="1" Background="Black" CornerRadius="0" Padding="30" Margin="0,60,0,0" Grid.RowSpan="2">
+                <StackPanel x:Name="formPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Width="600">
                     <!-- Campos -->
                     <StackPanel Orientation="Horizontal" Margin="3,10">
                         <Border Background="#FF530411" Padding="20,5" CornerRadius="5" Width="105">
@@ -96,74 +69,45 @@
 
                     <StackPanel Orientation="Horizontal" Margin="3,10">
                         <Border Background="#FF530411" Padding="20,5" CornerRadius="5" Width="105">
-                            <TextBlock Text="Executive Seats"
-                                       Foreground="White"
-                                       FontFamily="{StaticResource OutfitSemiBold}" 
-                                       FontSize="14" 
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"
-                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="Executive Seats" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
                         </Border>
-                        
-                        <Syncfusion:UpDown Name="ExecutiveSeatsUpDown"
-                                            Width="60"
-                                            FontFamily="{StaticResource OutfitBold}"
-                                            FontSize="14"
-                                            Margin="20,0"
-                                            Height="30"
-                                            CornerRadius="5"
-                                            BorderBrush="#FF530411"
-                                            BorderThickness="2"
-                                            Value="100" 
-                                            MinValue="1" 
-                                            MaxValue="100" 
-                                            Step="1"
-                                            NumberDecimalDigits="0"
-                                            HorizontalAlignment="Center" 
-                                            VerticalAlignment="Center"
-                                            TextAlignment="Center"/>
-
-                        
+                        <Syncfusion:UpDown Name="ExecutiveSeatsUpDown" Width="60" FontFamily="{StaticResource OutfitBold}" FontSize="14" Margin="20,0" Height="30" CornerRadius="5" BorderBrush="#FF530411" BorderThickness="2" Value="100" MinValue="1" MaxValue="100" Step="1" NumberDecimalDigits="0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="3,10">
                         <Border Background="#FF530411" Padding="20,5" CornerRadius="5" Width="105">
-                            <TextBlock Text="Economic Seats"
-                                       Foreground="White"
-                                       FontFamily="{StaticResource OutfitSemiBold}"
-                                       FontSize="14"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"
-                                       TextWrapping="Wrap"/>
+                            <TextBlock Text="Economic Seats" Foreground="White" FontFamily="{StaticResource OutfitSemiBold}" FontSize="14" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
                         </Border>
-                        <Syncfusion:UpDown Name="EconomicSeatsUpDown"
-                                             Width="60"
-                                             FontFamily="{StaticResource OutfitBold}"
-                                             FontSize="14"
-                                             Margin="20,0"
-                                             Height="30"
-                                             CornerRadius="5"
-                                             BorderBrush="#FF530411"
-                                             BorderThickness="2"
-                                             Value="100" 
-                                             MinValue="1" 
-                                             MaxValue="100" 
-                                             Step="1"
-                                             NumberDecimalDigits="0"
-                                             HorizontalAlignment="Center" 
-                                             VerticalAlignment="Center"
-                                             TextAlignment="Center"/>   
+                        <Syncfusion:UpDown Name="EconomicSeatsUpDown" Width="60" FontFamily="{StaticResource OutfitBold}" FontSize="14" Margin="20,0" Height="30" CornerRadius="5" BorderBrush="#FF530411" BorderThickness="2" Value="100" MinValue="1" MaxValue="100" Step="1" NumberDecimalDigits="0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="3,10"/>
 
-                    <Button x:Name="btnAddAirplane" Content="Add Airplane"
-                            Style="{StaticResource RoundedButton}"
+
+
+                    <Button x:Name="btnAddAirplane"
+                            Style="{StaticResource ActionButtonGold}"
                             Margin="0,15,0,0" Width="580"
-                            Click="btnAddAirplane_Click"/>
+                            Click="btnAddAirplane_Click">
+                        <StackPanel Orientation="Horizontal" Margin="3,10">
+                            <TextBlock Text="&#xE930;" FontFamily="Segoe MDL2 Assets" FontSize="20" 
+                                                       FontWeight="Bold"
+                                                       VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBlock Text="Add Airplane" FontSize="16" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        </Button>
+
                 </StackPanel>
             </Border>
+            <Grid x:Name="creatingModelOverlay"
+                  Grid.Row="1" Grid.RowSpan="2" Margin="-11,60,0,0" 
+                Background="#AA000000" Visibility="Collapsed" Panel.ZIndex="10">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid Height="Auto" Width="200">
+                        <ProgressBar Height="20" IsIndeterminate="True" Foreground="#FF530411" Background="#FF333333" BorderThickness="0"/>
+                        <TextBlock Text="Creating model..." Foreground="White" FontSize="14" FontFamily="{StaticResource OutfitMedium}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>
-

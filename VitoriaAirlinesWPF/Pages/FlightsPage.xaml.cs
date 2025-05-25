@@ -85,6 +85,9 @@ namespace VitoriaAirlinesWPF.Pages
 
         public async Task LoadFlightsAsync()
         {
+            panelFlightsLoading.Visibility = Visibility.Visible;
+            cmbOriginFilter.IsEnabled = false;
+
             try
             {
                 var flightsResponse = await _flightService.GetAllAsync();
@@ -110,6 +113,8 @@ namespace VitoriaAirlinesWPF.Pages
 
                     _allFlights = flights;
 
+                    cmbOriginFilter.IsEnabled = true;
+
                     cmbOriginFilter.SelectedIndex = 0;
 
                 }
@@ -124,10 +129,17 @@ namespace VitoriaAirlinesWPF.Pages
                 MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 flightsDataGrid.ItemsSource = null;
             }
+            finally
+            {
+                panelFlightsLoading.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async Task DeleteFlightAsync(Flight selectedFlight)
         {
+            panelFlightsLoading.Visibility = Visibility.Visible;
+            txtFlightsInfo.Text = "Deleting flight...";
+
             List<Client> flightPassengers = null;
             var clientsResponse = await _flightService.GetClientsForFlightAsync(selectedFlight.Id);
 
@@ -163,6 +175,9 @@ namespace VitoriaAirlinesWPF.Pages
             {
                 MessageBox.Show($"Error deleting flight: {flightResponse.Message}", "Deletion Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            panelFlightsLoading.Visibility = Visibility.Collapsed;
+
         }
 
 
@@ -212,14 +227,14 @@ namespace VitoriaAirlinesWPF.Pages
 
             var selectedItem = cmbOriginFilter.SelectedIndex;
 
-            if (selectedItem == 0)
+            if (selectedItem == 1)
             {
                 lblFlights.Content = "Scheduled Flights";
                 flightsDataGrid.ItemsSource = _allFlights.Where(f => f.DepartureDateTime > DateTime.Now)
                     .OrderBy(f => f.DepartureDateTime);
 
             }
-            else
+            else if (selectedItem == 2)
             {
                 lblFlights.Content = "Past Flights";
                 flightsDataGrid.ItemsSource = _allFlights.Where(f => f.DepartureDateTime <= DateTime.Now)
